@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PriceServiceException.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">test</a> &gt; <a href="index.source.html" class="el_package">com.inditex.domain.exception</a> &gt; <span class="el_source">PriceServiceException.java</span></div><h1>PriceServiceException.java</h1><pre class="source lang-java linenums">package com.inditex.domain.exception;
+
+/**
+ * Excepción personalizada que se lanza cuando ocurre un error en el servicio relacionado con los precios.
+ * Este tipo de excepción es utilizado para capturar fallos internos en el servicio, tales como problemas
+ * con la lógica del negocio o errores no controlados durante la ejecución de las operaciones de precios.
+ *
+ * &lt;p&gt;Extiende de {@link RuntimeException}, lo que significa que es una excepción no verificada
+ * (unchecked exception), y por lo tanto no es obligatorio manejarla con un bloque try-catch.&lt;/p&gt;
+ */
+public class PriceServiceException extends RuntimeException {
+
+    /**
+     * Constructor para crear una nueva instancia de {@link PriceServiceException} con un mensaje de error y una causa.
+     * Este constructor es útil cuando se desea asociar una excepción original (la causa) a la nueva excepción,
+     * proporcionando más contexto sobre el error que ocurrió.
+     *
+     * @param message El mensaje detallado que describe la causa del error.
+     * @param cause   La causa original de la excepción (por ejemplo, una excepción anterior que ocurrió).
+     */
+    public PriceServiceException(String message, Throwable cause) {
+<span class="fc" id="L22">        super(message, cause); // Llama al constructor de RuntimeException con el mensaje y la causa.</span>
+<span class="fc" id="L23">    }</span>
+
+    /**
+     * Constructor para crear una nueva instancia de {@link PriceServiceException} con un mensaje de error específico.
+     *
+     * @param message El mensaje detallado que describe la causa del error.
+     */
+    public PriceServiceException(String message) {
+<span class="fc" id="L31">        super(message); // Llama al constructor de RuntimeException con el mensaje.</span>
+<span class="fc" id="L32">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

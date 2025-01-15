@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PriceService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">test</a> &gt; <a href="index.source.html" class="el_package">com.inditex.domain.service</a> &gt; <span class="el_source">PriceService.java</span></div><h1>PriceService.java</h1><pre class="source lang-java linenums">package com.inditex.domain.service;
+
+import com.inditex.application.dto.PriceInDTO;
+import com.inditex.application.dto.PriceOutDTO;
+import com.inditex.application.mapper.PriceMapper;
+import com.inditex.domain.exception.PriceNotFoundException;
+import com.inditex.domain.exception.PriceServiceException;
+import com.inditex.domain.port.in.PriceServicePort;
+import com.inditex.domain.port.out.PriceRepositoryPort;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.Primary;
+import org.springframework.stereotype.Service;
+import lombok.extern.slf4j.Slf4j;
+
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Optional;
+
+import com.inditex.domain.model.Price;
+
+/**
+ * Servicio que gestiona la obtención de precios de productos según los parámetros proporcionados.
+ * Utiliza un repositorio para buscar los precios y los convierte a un formato adecuado para el cliente.
+ * Este servicio maneja excepciones específicas para informar de errores relacionados con la obtención de precios.
+ */
+@Primary
+@Service
+<span class="fc" id="L28">@Slf4j</span>
+public class PriceService implements PriceServicePort {
+
+    private final PriceMapper priceMapper;
+
+    private final PriceRepositoryPort priceRepositoryPort;
+
+    /**
+     * Constructor que inyecta las dependencias necesarias para el servicio de precios.
+     *
+     * @param priceRepository El repositorio utilizado para acceder a los datos de los precios.
+     * @param priceMapper El mapeador para convertir entidades a DTOs.
+     */
+<span class="fc" id="L41">    public PriceService(@Qualifier(&quot;priceRepositoryPort&quot;) PriceRepositoryPort priceRepository, PriceMapper priceMapper) {</span>
+<span class="fc" id="L42">        this.priceRepositoryPort = priceRepository;</span>
+<span class="fc" id="L43">        this.priceMapper = priceMapper;</span>
+<span class="fc" id="L44">    }</span>
+
+    /**
+     * Obtiene un único precio basado en los parámetros proporcionados: ID de marca, ID de producto y fecha de aplicación.
+     * El precio obtenido es el de mayor prioridad. Si no se encuentra el precio, se lanza una excepción {@link PriceNotFoundException}.
+     *
+     * @param params Parámetros de entrada, que incluyen la marca, producto y fecha de aplicación.
+     * @return El precio encontrado convertido a un DTO {@link PriceOutDTO}.
+     * @throws PriceServiceException Si ocurre un error inesperado durante la ejecución.
+     * @throws PriceNotFoundException Si no se encuentra ningún precio para los parámetros proporcionados.
+     * @throws IllegalArgumentException Si los parámetros de entrada son inválidos (null o incorrectos).
+     */
+    public PriceOutDTO getSinglePrice(PriceInDTO params) {
+        try {
+            // Extraer parámetros del DTO
+<span class="fc" id="L59">            Long brandId = params.getBrandId();</span>
+<span class="fc" id="L60">            Long productId = params.getProductId();</span>
+
+            // Validar que los parámetros no sean nulos
+<span class="pc bpc" id="L63" title="1 of 6 branches missed.">            if (brandId == null || productId == null || params.getApplicationDate() == null) {</span>
+<span class="fc" id="L64">                throw new IllegalArgumentException(&quot;Los parámetros 'brandId', 'productId' y 'applicationDate' son obligatorios.&quot;);</span>
+            }
+
+            // Parsear la fecha de aplicación a LocalDateTime
+<span class="fc" id="L68">            LocalDateTime applicationDate = parseStringToLocalDateTime(params.getApplicationDate());</span>
+
+<span class="fc" id="L70">            log.info(&quot;Obteniendo el precio para la Marca ID {}, Producto ID {}, Fecha de Aplicación {}&quot;, brandId, productId, applicationDate);</span>
+
+            // Llamada al repositorio para obtener el precio más relevante
+<span class="fc" id="L73">            Optional&lt;Price&gt; optionalPrice = priceRepositoryPort.findTopPriceByBrandIdAndProductIdAndApplicationDate(</span>
+                    brandId, productId, applicationDate);
+
+            // Manejo del resultado: si no se encuentra, lanzar excepción PriceNotFoundException
+<span class="fc" id="L77">            return optionalPrice.map(priceMapper::convertToDTO)</span>
+<span class="fc" id="L78">                    .orElseThrow(() -&gt; {</span>
+<span class="fc" id="L79">                        log.warn(&quot;No se encontraron precios para los parámetros proporcionados&quot;);</span>
+<span class="fc" id="L80">                        return new PriceNotFoundException(&quot;No se encontraron precios para la Marca ID &quot; + brandId + &quot; y Producto ID &quot; + productId);</span>
+                    });
+<span class="fc" id="L82">        } catch (IllegalArgumentException e) {</span>
+            // Capturar y loggear errores de parámetros incorrectos
+<span class="fc" id="L84">            log.error(&quot;Parámetros inválidos proporcionados para la solicitud de obtener precio&quot;, e);</span>
+<span class="fc" id="L85">            throw e;  // Propagar la excepción tal cual se recibió</span>
+<span class="fc" id="L86">        } catch (PriceNotFoundException e) {</span>
+            // Capturar y loggear cuando no se encuentran precios
+<span class="fc" id="L88">            log.error(&quot;No se encontró el precio para los parámetros proporcionados&quot;, e);</span>
+<span class="fc" id="L89">            throw e;  // Propagar la excepción personalizada</span>
+<span class="fc" id="L90">        } catch (Exception e) {</span>
+            // Capturar y loggear errores inesperados, lanzando una excepción personalizada
+<span class="fc" id="L92">            log.error(&quot;Error inesperado procesando la solicitud de obtener precio&quot;, e);</span>
+<span class="fc" id="L93">            throw new PriceServiceException(&quot;Error inesperado procesando la solicitud de obtener precio&quot;, e);  // Excepción personalizada</span>
+        }
+    }
+
+    /**
+     * Convierte una cadena de texto que representa una fecha en formato &quot;yyyy-MM-dd-HH.mm.ss&quot; a un objeto LocalDateTime.
+     *
+     * @param dateString La cadena de texto que representa la fecha a convertir.
+     * @return Un objeto LocalDateTime correspondiente a la cadena proporcionada.
+     */
+    private LocalDateTime parseStringToLocalDateTime(String dateString) {
+        // Definir el formato esperado de la fecha
+<span class="fc" id="L105">        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(&quot;yyyy-MM-dd-HH.mm.ss&quot;);</span>
+        // Parsear la fecha
+<span class="fc" id="L107">        return LocalDateTime.parse(dateString, formatter);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

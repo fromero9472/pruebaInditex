@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PriceRepository.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">test</a> &gt; <a href="index.source.html" class="el_package">com.inditex.infrastructure.repository</a> &gt; <span class="el_source">PriceRepository.java</span></div><h1>PriceRepository.java</h1><pre class="source lang-java linenums">package com.inditex.infrastructure.repository;
+
+import com.inditex.domain.model.Price;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
+
+/**
+ * Repositorio de datos para la entidad Price.
+ * Extiende JpaRepository para obtener funcionalidades CRUD básicas
+ * y define métodos específicos de consulta.
+ */
+public interface PriceRepository extends JpaRepository&lt;Price, Long&gt; {
+
+    /**
+     * Devuelve un precio aplicable al producto y marca en la fecha de aplicación dada,
+     * asegurando que se devuelva el de mayor prioridad.
+     *
+     * @param brandId       ID de la marca.
+     * @param productId     ID del producto.
+     * @param applicationDate Fecha de aplicación para la cual se obtiene el precio.
+     * @return Lista de precios relevantes (ordenados por prioridad).
+     */
+    @Query(&quot;SELECT p FROM Price p WHERE p.brandId = :brandId &quot; +  // Filtra por la marca.
+            &quot;AND p.productId = :productId &quot; +  // Filtra por el producto.
+            &quot;AND :applicationDate BETWEEN p.startDate AND p.endDate &quot; +  // Verifica que la fecha de aplicación esté dentro del rango de fechas.
+            &quot;ORDER BY p.priority DESC, p.startDate DESC, p.id DESC&quot;)  // Ordena primero por prioridad descendente, luego por fecha de inicio y finalmente por ID.
+    List&lt;Price&gt; findTopPricesByBrandIdAndProductIdAndApplicationDate(  // Método que recibe los parámetros para obtener los precios.
+                                                                       @Param(&quot;brandId&quot;) Long brandId,  // Parámetro de la marca.
+                                                                       @Param(&quot;productId&quot;) Long productId,  // Parámetro del producto.
+                                                                       @Param(&quot;applicationDate&quot;) LocalDateTime applicationDate);  // Parámetro de la fecha de aplicación.
+
+    /**
+     * Devuelve el precio más relevante (con mayor prioridad) para ese producto y marca
+     * en la fecha de aplicación.
+     *
+     * @param brandId       ID de la marca.
+     * @param productId     ID del producto.
+     * @param applicationDate Fecha de aplicación.
+     * @return Un Optional conteniendo el precio más relevante si existe.
+     */
+    default Optional&lt;Price&gt; findTopPriceByBrandIdAndProductIdAndApplicationDateDefault(  // Método por defecto para obtener un solo precio.
+                                                                                         Long brandId, Long productId, LocalDateTime applicationDate) {
+
+        // Llama al método findTopPricesByBrandIdAndProductIdAndApplicationDate y obtiene la lista de precios.
+<span class="fc" id="L50">        List&lt;Price&gt; prices = findTopPricesByBrandIdAndProductIdAndApplicationDate(brandId, productId, applicationDate);</span>
+
+        // Si la lista de precios no está vacía, devuelve el primer precio como un Optional.
+<span class="pc bpc" id="L53" title="1 of 2 branches missed.">        return prices.isEmpty() ? Optional.empty() : Optional.of(prices.get(0));  // Devuelve el precio más relevante envuelto en un Optional.</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

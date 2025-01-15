@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PriceMapper.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">test</a> &gt; <a href="index.source.html" class="el_package">com.inditex.application.mapper</a> &gt; <span class="el_source">PriceMapper.java</span></div><h1>PriceMapper.java</h1><pre class="source lang-java linenums">package com.inditex.application.mapper;
+
+import com.inditex.application.dto.PriceOutDTO;
+import com.inditex.domain.model.Price;
+import lombok.extern.slf4j.Slf4j;
+import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+/**
+ * Clase encargada de mapear entre las entidades de dominio y los DTOs (Data Transfer Objects).
+ * Facilita la conversión de objetos entre las capas de la aplicación para separar las preocupaciones.
+ */
+@Component
+<span class="fc" id="L15">@Slf4j  // Anotación de Lombok para habilitar logging en la clase.</span>
+<span class="fc" id="L16">public class PriceMapper {</span>
+
+    /**
+     * Instancia de ModelMapper utilizada para realizar el mapeo de objetos entre entidades y DTOs.
+     */
+    @Autowired
+    private ModelMapper modelMapper;
+
+    /**
+     * Convierte un objeto de tipo {@link Price} (entidad) a un {@link PriceOutDTO} (DTO).
+     * Este método mapea los atributos de la entidad {@link Price} a su correspondiente DTO.
+     *
+     * @param product Objeto de tipo {@link Price} que representa la entidad de dominio.
+     * @return Un objeto {@link PriceOutDTO} con los datos de la entidad {@link Price}.
+     */
+    public PriceOutDTO convertToDTO(Price product) {
+<span class="fc" id="L32">        log.info(&quot;Convirtiendo entidad Price a DTO: {}&quot;, product);  // Log para rastrear la conversión de la entidad.</span>
+<span class="fc" id="L33">        PriceOutDTO dto = modelMapper.map(product, PriceOutDTO.class);</span>
+<span class="fc" id="L34">        log.info(&quot;Conversión exitosa. DTO resultante: {}&quot;, dto);  // Log para confirmar que la conversión fue exitosa.</span>
+<span class="fc" id="L35">        return dto;</span>
+    }
+
+    /**
+     * Convierte un objeto de tipo {@link PriceOutDTO} a un {@link Price} (entidad).
+     * Este método mapea los atributos del DTO {@link PriceOutDTO} a su correspondiente entidad.
+     *
+     * @param dto Objeto de tipo {@link PriceOutDTO} que representa los datos a convertir a entidad.
+     * @return Un objeto {@link Price} con los datos provenientes del DTO {@link PriceOutDTO}.
+     */
+    public Price convertToEntity(PriceOutDTO dto) {
+<span class="fc" id="L46">        log.info(&quot;Convirtiendo DTO PriceOutDTO a entidad: {}&quot;, dto);  // Log para rastrear la conversión del DTO.</span>
+<span class="fc" id="L47">        Price entity = modelMapper.map(dto, Price.class);</span>
+<span class="fc" id="L48">        log.info(&quot;Conversión exitosa. Entidad resultante: {}&quot;, entity);  // Log para confirmar que la conversión fue exitosa.</span>
+<span class="fc" id="L49">        return entity;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

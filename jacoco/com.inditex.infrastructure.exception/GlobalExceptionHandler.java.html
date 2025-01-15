@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GlobalExceptionHandler.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">test</a> &gt; <a href="index.source.html" class="el_package">com.inditex.infrastructure.exception</a> &gt; <span class="el_source">GlobalExceptionHandler.java</span></div><h1>GlobalExceptionHandler.java</h1><pre class="source lang-java linenums">package com.inditex.infrastructure.exception;
+
+import com.inditex.domain.exception.PriceNotFoundException;
+import com.inditex.domain.exception.PriceServiceException;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ControllerAdvice;
+
+import java.util.HashMap;
+import java.util.Map;
+
+/**
+ * Clase global de manejo de excepciones para la aplicación.
+ * Esta clase captura y maneja diferentes excepciones lanzadas en la aplicación
+ * y devuelve respuestas personalizadas con el código de estado HTTP correspondiente.
+ */
+<span class="fc" id="L19">@Slf4j</span>
+@ControllerAdvice  // Indica que esta clase es responsable de manejar excepciones globalmente en la aplicación.
+<span class="fc" id="L21">public class GlobalExceptionHandler {</span>
+
+    /**
+     * Maneja la excepción PriceNotFoundException.
+     * Se activa cuando no se encuentran precios para los parámetros proporcionados.
+     *
+     * @param ex La excepción capturada.
+     * @return La respuesta con el código de error y mensaje correspondiente.
+     */
+    @ExceptionHandler(PriceNotFoundException.class)  // Anotación para capturar excepciones de tipo PriceNotFoundException.
+    public ResponseEntity&lt;Map&lt;String, Object&gt;&gt; handlePriceNotFoundException(PriceNotFoundException ex) {
+<span class="fc" id="L32">        log.error(&quot;Error al buscar precios: {}&quot;, ex.getMessage(), ex);  // Log de error con detalles de la excepción.</span>
+<span class="fc" id="L33">        Map&lt;String, Object&gt; response = new HashMap&lt;&gt;();  // Mapa para almacenar la información de la respuesta.</span>
+
+        // Agregamos los detalles del error en el mapa.
+<span class="fc" id="L36">        response.put(&quot;error&quot;, &quot;Sin contenido. No se encontraron precios para los parámetros proporcionados.&quot;);</span>
+<span class="fc" id="L37">        response.put(&quot;message&quot;, ex.getMessage());  // El mensaje de la excepción se incluye en la respuesta.</span>
+<span class="fc" id="L38">        response.put(&quot;status&quot;, HttpStatus.NOT_FOUND.value());  // El código de estado HTTP 404 para &quot;Not Found&quot;.</span>
+
+<span class="fc" id="L40">        return new ResponseEntity&lt;&gt;(response, HttpStatus.NOT_FOUND);  // Devolvemos la respuesta con el código de estado correspondiente.</span>
+    }
+
+    /**
+     * Maneja la excepción PriceServiceException.
+     * Se activa cuando ocurre un error en el servicio de precios, como un fallo interno del servidor.
+     *
+     * @param ex La excepción capturada.
+     * @return La respuesta con el código de error y mensaje correspondiente.
+     */
+    @ExceptionHandler(PriceServiceException.class)  // Anotación para capturar excepciones de tipo PriceServiceException.
+    public ResponseEntity&lt;Map&lt;String, Object&gt;&gt; handlePriceServiceException(PriceServiceException ex) {
+<span class="fc" id="L52">        log.error(&quot;Error en el servicio de precios: {}&quot;, ex.getMessage(), ex);  // Log de error con detalles de la excepción.</span>
+<span class="fc" id="L53">        Map&lt;String, Object&gt; response = new HashMap&lt;&gt;();  // Mapa para almacenar la información de la respuesta.</span>
+
+        // Agregamos los detalles del error en el mapa.
+<span class="fc" id="L56">        response.put(&quot;error&quot;, &quot;Error interno del servidor. Consulta los logs para más detalles.&quot;);</span>
+<span class="fc" id="L57">        response.put(&quot;message&quot;, ex.getMessage());  // El mensaje de la excepción se incluye en la respuesta.</span>
+<span class="fc" id="L58">        response.put(&quot;status&quot;, HttpStatus.INTERNAL_SERVER_ERROR.value());  // El código de estado HTTP 500 para &quot;Internal Server Error&quot;.</span>
+
+<span class="fc" id="L60">        return new ResponseEntity&lt;&gt;(response, HttpStatus.INTERNAL_SERVER_ERROR);  // Devolvemos la respuesta con el código de estado correspondiente.</span>
+    }
+
+    /**
+     * Maneja la excepción IllegalArgumentException.
+     * Se activa cuando los parámetros proporcionados en la solicitud son incorrectos o inválidos.
+     *
+     * @param ex La excepción capturada.
+     * @return La respuesta con el código de error y mensaje correspondiente.
+     */
+    @ExceptionHandler(IllegalArgumentException.class)  // Anotación para capturar excepciones de tipo IllegalArgumentException.
+    public ResponseEntity&lt;Map&lt;String, Object&gt;&gt; handleIllegalArgumentException(IllegalArgumentException ex) {
+<span class="fc" id="L72">        log.warn(&quot;Solicitud incorrecta: {}&quot;, ex.getMessage(), ex);  // Log de advertencia para solicitudes incorrectas.</span>
+<span class="fc" id="L73">        Map&lt;String, Object&gt; response = new HashMap&lt;&gt;();  // Mapa para almacenar la información de la respuesta.</span>
+
+        // Agregamos los detalles del error en el mapa.
+<span class="fc" id="L76">        response.put(&quot;error&quot;, &quot;Solicitud incorrecta. Verifica los parámetros.&quot;);  // Mensaje de error para solicitudes incorrectas.</span>
+<span class="fc" id="L77">        response.put(&quot;message&quot;, ex.getMessage());  // El mensaje de la excepción se incluye en la respuesta.</span>
+<span class="fc" id="L78">        response.put(&quot;status&quot;, HttpStatus.BAD_REQUEST.value());  // El código de estado HTTP 400 para &quot;Bad Request&quot;.</span>
+
+<span class="fc" id="L80">        return new ResponseEntity&lt;&gt;(response, HttpStatus.BAD_REQUEST);  // Devolvemos la respuesta con el código de estado correspondiente.</span>
+    }
+
+    /**
+     * Maneja las excepciones no esperadas o genéricas.
+     * Se activa para excepciones no especificadas anteriormente.
+     *
+     * @param ex La excepción capturada.
+     * @return La respuesta con el código de error y mensaje correspondiente.
+     */
+    @ExceptionHandler(Exception.class)  // Anotación para capturar cualquier tipo de excepción general.
+    public ResponseEntity&lt;Map&lt;String, Object&gt;&gt; handleGenericException(Exception ex) {
+<span class="fc" id="L92">        log.error(&quot;Error inesperado: {}&quot;, ex.getMessage(), ex);  // Log de error para excepciones genéricas.</span>
+<span class="fc" id="L93">        Map&lt;String, Object&gt; response = new HashMap&lt;&gt;();  // Mapa para almacenar la información de la respuesta.</span>
+
+        // Agregamos los detalles del error en el mapa.
+<span class="fc" id="L96">        response.put(&quot;error&quot;, &quot;Unexpected Error&quot;);  // Mensaje de error genérico para cualquier excepción inesperada.</span>
+<span class="fc" id="L97">        response.put(&quot;message&quot;, ex.getMessage());  // El mensaje de la excepción se incluye en la respuesta.</span>
+<span class="fc" id="L98">        response.put(&quot;status&quot;, HttpStatus.INTERNAL_SERVER_ERROR.value());  // El código de estado HTTP 500 para &quot;Internal Server Error&quot;.</span>
+
+<span class="fc" id="L100">        return new ResponseEntity&lt;&gt;(response, HttpStatus.INTERNAL_SERVER_ERROR);  // Devolvemos la respuesta con el código de estado correspondiente.</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>
