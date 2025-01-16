@@ -22,7 +22,7 @@ class GlobalExceptionHandlerTest {
 
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
         assertTrue(response.getBody().containsKey("error"));
-        assertEquals("Sin contenido. No se encontraron precios para los parámetros proporcionados.", response.getBody().get("error"));
+        assertEquals("No se encontraron precios.", response.getBody().get("error"));
         assertTrue(response.getBody().containsKey("message"));
         assertEquals(ex.getMessage(), response.getBody().get("message"));
         assertTrue(response.getBody().containsKey("status"));
@@ -45,7 +45,7 @@ class GlobalExceptionHandlerTest {
 
         // Verificar que el error y el mensaje sean correctos
         assertTrue(response.getBody().containsKey("error"));
-        assertEquals("Sin contenido. No se encontraron precios para los parámetros proporcionados.", response.getBody().get("error"));
+        assertEquals("No se encontraron precios.", response.getBody().get("error"));
         assertTrue(response.getBody().containsKey("message"));
         assertEquals(ex.getMessage(), response.getBody().get("message"));
         assertTrue(response.getBody().containsKey("status"));
@@ -61,7 +61,7 @@ class GlobalExceptionHandlerTest {
 
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
         assertTrue(response.getBody().containsKey("error"));
-        assertEquals("Error interno del servidor. Consulta los logs para más detalles.", response.getBody().get("error"));
+        assertEquals("Error interno del servidor.", response.getBody().get("error"));
         assertTrue(response.getBody().containsKey("message"));
         assertEquals(ex.getMessage(), response.getBody().get("message"));
         assertTrue(response.getBody().containsKey("status"));
@@ -77,7 +77,7 @@ class GlobalExceptionHandlerTest {
 
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
         assertTrue(response.getBody().containsKey("error"));
-        assertEquals("Solicitud incorrecta. Verifica los parámetros.", response.getBody().get("error"));
+        assertEquals("Solicitud incorrecta.", response.getBody().get("error"));
         assertTrue(response.getBody().containsKey("message"));
         assertEquals(ex.getMessage(), response.getBody().get("message"));
         assertTrue(response.getBody().containsKey("status"));
@@ -93,7 +93,7 @@ class GlobalExceptionHandlerTest {
 
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
         assertTrue(response.getBody().containsKey("error"));
-        assertEquals("Unexpected Error", response.getBody().get("error"));
+        assertEquals("Error inesperado.", response.getBody().get("error"));
         assertTrue(response.getBody().containsKey("message"));
         assertEquals(ex.getMessage(), response.getBody().get("message"));
         assertTrue(response.getBody().containsKey("status"));

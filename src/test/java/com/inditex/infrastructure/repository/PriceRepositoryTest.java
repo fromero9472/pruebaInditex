@@ -1,5 +1,6 @@
 package com.inditex.infrastructure.repository;
 
+import com.inditex.domain.exception.PriceNotFoundException;
 import com.inditex.domain.model.Price;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -14,7 +15,7 @@ import java.util.Optional;
 import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.*;
 
-@ExtendWith(MockitoExtension.class)  // Habilitar soporte para Mockito
+@ExtendWith(MockitoExtension.class) // Habilitar soporte para Mockito
 class PriceRepositoryTest {
 
     @Mock
@@ -34,53 +35,47 @@ class PriceRepositoryTest {
         productId = 35455L;
         applicationDate = LocalDateTime.of(2025, 1, 1, 0, 0, 0, 0);
     }
+
     @Test
     public void testFindTopPriceByBrandIdAndProductIdAndApplicationDate_PriceFound() {
         // Crear un objeto Price simulado que se devolverá envuelto en un Optional
         Price mockPrice = new Price(1L, brandId, applicationDate, applicationDate.plusDays(1), 1L, productId, 1, 100.0, "USD");
         Optional<Price> mockOptionalPrice = Optional.of(mockPrice);
 
-        // Configurar el mock para devolver el Optional con el precio simulado cuando se invoque el método por defecto
-        when(priceRepository.findTopByBrandIdAndProductIdAndStartDateLessThanEqualAndEndDateGreaterThanEqualOrderByPriorityDesc(brandId, productId, applicationDate,applicationDate))
+        // Configurar el mock para devolver el Optional con el precio simulado cuando se invoque el método
+        when(priceRepository.findTopByBrandIdAndProductIdAndStartDateLessThanEqualAndEndDateGreaterThanEqualOrderByPriorityDesc(
+                brandId, productId, applicationDate, applicationDate))
                 .thenReturn(mockOptionalPrice);
 
         // Llamar al método del adaptador
         Price result = priceRepositoryAdapter.findTopPriceByBrandIdAndProductIdAndApplicationDate(brandId, productId, applicationDate);
 
         // Verificar que el resultado esté presente y coincida con el precio simulado
-
         assertEquals(mockPrice, result);
 
-        // Verificar que el método findTopPriceByBrandIdAndProductIdAndApplicationDateDefault haya sido llamado
+        // Verificar que el método se llamó una vez
         verify(priceRepository, times(1))
-                .findTopByBrandIdAndProductIdAndStartDateLessThanEqualAndEndDateGreaterThanEqualOrderByPriorityDesc(brandId, productId, applicationDate,applicationDate);
-
-        // Verificar que no se haya llamado al método findTopPricesByBrandIdAndProductIdAndApplicationDate
-        verify(priceRepository, times(0))
-                .findTopByBrandIdAndProductIdAndStartDateLessThanEqualAndEndDateGreaterThanEqualOrderByPriorityDesc(brandId, productId, applicationDate,applicationDate);
+                .findTopByBrandIdAndProductIdAndStartDateLessThanEqualAndEndDateGreaterThanEqualOrderByPriorityDesc(
+                        brandId, productId, applicationDate, applicationDate);
     }
-
-
 
     @Test
     public void testFindTopPriceByBrandIdAndProductIdAndApplicationDate_NoPriceFound() {
         // Configurar el mock para devolver un Optional vacío cuando no haya resultados
-        when(priceRepository.findTopByBrandIdAndProductIdAndStartDateLessThanEqualAndEndDateGreaterThanEqualOrderByPriorityDesc(brandId, productId, applicationDate,applicationDate))
+        when(priceRepository.findTopByBrandIdAndProductIdAndStartDateLessThanEqualAndEndDateGreaterThanEqualOrderByPriorityDesc(
+                brandId, productId, applicationDate, applicationDate))
                 .thenReturn(Optional.empty());
 
         // Llamar al método del adaptador
-       Price result = priceRepositoryAdapter.findTopPriceByBrandIdAndProductIdAndApplicationDate(brandId, productId, applicationDate);
+        Exception exception = assertThrows(PriceNotFoundException.class, () ->
+                priceRepositoryAdapter.findTopPriceByBrandIdAndProductIdAndApplicationDate(brandId, productId, applicationDate));
 
-        // Verificar que el resultado esté vacío
+        // Verificar que el mensaje de la excepción sea el esperado
+        assertEquals("Precio no encontrado para el producto y marca especificados", exception.getMessage());
 
-        // Verificar que el método findTopPriceByBrandIdAndProductIdAndApplicationDateDefault haya sido llamado
+        // Verificar que el método se llamó una vez
         verify(priceRepository, times(1))
-                .findTopByBrandIdAndProductIdAndStartDateLessThanEqualAndEndDateGreaterThanEqualOrderByPriorityDesc(brandId, productId, applicationDate,applicationDate);
-
-        // Verificar que no se haya llamado al método findTopPricesByBrandIdAndProductIdAndApplicationDate
-        verify(priceRepository, times(0))
-                .findTopByBrandIdAndProductIdAndStartDateLessThanEqualAndEndDateGreaterThanEqualOrderByPriorityDesc(brandId, productId, applicationDate,applicationDate);
+                .findTopByBrandIdAndProductIdAndStartDateLessThanEqualAndEndDateGreaterThanEqualOrderByPriorityDesc(
+                        brandId, productId, applicationDate, applicationDate);
     }
-
-
 }

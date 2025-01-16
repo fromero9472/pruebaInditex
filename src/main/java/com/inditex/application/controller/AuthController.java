@@ -15,9 +15,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
 
-/**
- * Controlador para la autenticación de usuarios y generación de tokens JWT.
- */
 @RestController
 @Tag(name = "Authentication", description = "Endpoints para la autenticación y generación de tokens JWT")
 @RequestMapping("/v1/auth")
@@ -33,13 +30,6 @@ public class AuthController {
         this.authService = authService;
     }
 
-    /**
-     * Endpoint para generar un token JWT si las credenciales son válidas.
-     *
-     * @param user Nombre del usuario.
-     * @param contrasena Contraseña del usuario.
-     * @return Token JWT si las credenciales son correctas; error 401 si no lo son.
-     */
     @Operation(
             summary = "Generar Token de Autenticación",
             description = "Genera un token JWT válido por 24 horas si las credenciales son correctas.",
@@ -79,11 +69,6 @@ public class AuthController {
         }
     }
 
-    /**
-     * Establece el secreto JWT, útil para inyección en pruebas.
-     *
-     * @param jwtSecret Clave secreta para firmar el token JWT.
-     */
     public void setJwtSecret(String jwtSecret) {
         this.jwtSecret = jwtSecret;
     }

@@ -3,6 +3,7 @@ package com.inditex.infrastructure.config;
 import com.inditex.application.mapper.PriceMapper;
 import com.inditex.domain.port.in.AuthServicePort;
 import com.inditex.domain.port.in.PriceServicePort;
+import com.inditex.domain.port.out.CredentialValidator;
 import com.inditex.domain.port.out.PriceRepositoryPort;
 import com.inditex.domain.service.AuthService;
 import com.inditex.domain.service.PriceService;
@@ -47,11 +48,12 @@ public class AppConfig {
      * Define el bean para el servicio de autenticación.
      * Valida las credenciales de usuario.
      *
+     * @param credentialValidator Componente encargado de la validación de credenciales.
      * @return Un servicio que valida las credenciales del usuario.
      */
     @Bean
-    public AuthServicePort authServicePort() {
+    public AuthServicePort authServicePort(CredentialValidator credentialValidator) {
         log.info("Creando el bean AuthServicePort");
-        return new AuthService();
+        return new AuthService(credentialValidator);
     }
 }

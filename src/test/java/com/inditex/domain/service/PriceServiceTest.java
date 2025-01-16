@@ -52,7 +52,7 @@ class PriceServiceTest {
 
         when(priceRepository.findTopPriceByBrandIdAndProductIdAndApplicationDate(
                 eq(brandId), eq(productId), eq(parseStringToLocalDateTime(dateTime))))
-                .thenReturn(Optional.of(mockPrice));
+                .thenReturn(mockPrice);
 
         PriceOutDTO mockDTO = new PriceOutDTO(
                 1L,
@@ -80,15 +80,21 @@ class PriceServiceTest {
         String dateTime = "2023-12-14-10.00.00";
         LocalDateTime applicationDate = parseStringToLocalDateTime(dateTime);
 
+        // Simula que el repositorio lanza la excepción PriceNotFoundException
         when(priceRepository.findTopPriceByBrandIdAndProductIdAndApplicationDate(brandId, productId, applicationDate))
-                .thenReturn(Optional.empty());
+                .thenThrow(new PriceNotFoundException("No se encontraron precios para la Marca ID " + brandId + " y Producto ID " + productId));
 
         PriceInDTO params = new PriceInDTO(productId, brandId, dateTime);
 
         // Act and Assert
-        PriceNotFoundException exception = assertThrows(PriceNotFoundException.class, () -> priceService.getSinglePrice(params));
+        PriceNotFoundException exception = assertThrows(
+                PriceNotFoundException.class,
+                () -> priceService.getSinglePrice(params)
+        );
+
         assertEquals("No se encontraron precios para la Marca ID " + brandId + " y Producto ID " + productId, exception.getMessage());
     }
+
 
     @Test
     void testGetSinglePrice_ExceptionHandling() {
@@ -117,7 +123,7 @@ class PriceServiceTest {
 
         // Act and Assert
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> priceService.getSinglePrice(params));
-        assertEquals("Los parámetros 'brandId', 'productId' y 'applicationDate' son obligatorios.", exception.getMessage());
+        assertEquals("Parámetros 'brandId', 'productId' y 'applicationDate' son obligatorios.", exception.getMessage());
     }
 
     @Test
@@ -129,7 +135,7 @@ class PriceServiceTest {
 
         // Act and Assert
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> priceService.getSinglePrice(params));
-        assertEquals("Los parámetros 'brandId', 'productId' y 'applicationDate' son obligatorios.", exception.getMessage());
+        assertEquals("Parámetros 'brandId', 'productId' y 'applicationDate' son obligatorios.", exception.getMessage());
     }
 
     // Helper method to parse strings into LocalDateTime

@@ -55,10 +55,10 @@ public class PriceService implements PriceServicePort {
             log.info("Obteniendo precio para Marca ID {}, Producto ID {}, Fecha {}", brandId, productId, applicationDate);
 
             // Obtener el precio más relevante desde el repositorio
-            Optional<Price> optionalPrice = priceRepositoryPort.findTopPriceByBrandIdAndProductIdAndApplicationDate(brandId, productId, applicationDate);
+            Price price = priceRepositoryPort.findTopPriceByBrandIdAndProductIdAndApplicationDate(brandId, productId, applicationDate);
 
-            return optionalPrice.map(priceMapper::convertToDTO)
-                    .orElseThrow(() -> new PriceNotFoundException("No se encontraron precios para la Marca ID " + brandId + " y Producto ID " + productId));
+            return priceMapper.convertToDTO(price);
+
         } catch (IllegalArgumentException e) {
             log.error("Parámetros inválidos para obtener precio", e);
             throw e;

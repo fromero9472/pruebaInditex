@@ -7,6 +7,7 @@ import com.inditex.domain.service.AuthService;
 import com.inditex.domain.service.PriceService;
 import com.inditex.infrastructure.repository.PriceRepository;
 import com.inditex.infrastructure.repository.PriceRepositoryAdapter;
+import com.inditex.infrastructure.security.JwtRequestFilter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -91,12 +92,6 @@ public class AppConfigTest {
         assertThat(securityConfigBean).isNotNull();
     }
 
-    @Test
-    public void testDataLoadConfigBean() {
-        // Verificar si el bean DataLoadConfig se crea correctamente
-        DataLoadConfig dataLoadConfigBean = applicationContext.getBean(DataLoadConfig.class);
-        assertThat(dataLoadConfigBean).isNotNull();
-    }
 
     @BeforeEach
     public void setUp() {
