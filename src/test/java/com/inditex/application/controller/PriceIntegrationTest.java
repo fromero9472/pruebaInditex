@@ -34,7 +34,7 @@ public class PriceIntegrationTest {
     }
 
     @Test
-    public void testGetPriceList_Success_10AM_14Junio() throws Exception {
+    void testGetPriceList_Success_10AM_14Junio() throws Exception {
         // Petición a las 10:00 del día 14 del producto 35455 para la brand 1 (ZARA)
         Long brandId = 1L;
         Long productId = 35455L;
@@ -58,7 +58,7 @@ public class PriceIntegrationTest {
     }
 
     @Test
-    public void testGetPriceList_Success_4PM_14Junio() throws Exception {
+    void testGetPriceList_Success_4PM_14Junio() throws Exception {
         // Petición a las 16:00 del día 14 del producto 35455 para la brand 1 (ZARA)
         Long brandId = 1L;
         Long productId = 35455L;
@@ -82,7 +82,7 @@ public class PriceIntegrationTest {
     }
 
     @Test
-    public void testGetPriceList_Success_9PM_14Junio() throws Exception {
+    void testGetPriceList_Success_9PM_14Junio() throws Exception {
         // Petición a las 21:00 del día 14 del producto 35455 para la brand 1 (ZARA)
         Long brandId = 1L;
         Long productId = 35455L;
@@ -106,7 +106,7 @@ public class PriceIntegrationTest {
     }
 
     @Test
-    public void testGetPriceList_Success_10AM_15Junio() throws Exception {
+    void testGetPriceList_Success_10AM_15Junio() throws Exception {
         // Petición a las 10:00 del día 15 del producto 35455 para la brand 1 (ZARA)
         Long brandId = 1L;
         Long productId = 35455L;
@@ -130,7 +130,7 @@ public class PriceIntegrationTest {
     }
 
     @Test
-    public void testGetPriceList_Success_9PM_16Junio() throws Exception {
+    void testGetPriceList_Success_9PM_16Junio() throws Exception {
         // Petición a las 21:00 del día 16 del producto 35455 para la brand 1 (ZARA)
         Long brandId = 1L;
         Long productId = 35455L;
