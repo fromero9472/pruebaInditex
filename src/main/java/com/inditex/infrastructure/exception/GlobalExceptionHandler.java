@@ -1,5 +1,6 @@
 package com.inditex.infrastructure.exception;
 
+import com.inditex.domain.exception.DecryptionException;
 import com.inditex.domain.exception.PriceNotFoundException;
 import com.inditex.domain.exception.PriceServiceException;
 import lombok.extern.slf4j.Slf4j;
@@ -14,6 +15,9 @@ import java.util.Map;
 @Slf4j
 @ControllerAdvice
 public class GlobalExceptionHandler {
+    public static final String ERROR_MESSAGE = "error";
+    public static final String ERROR_STATUS_MESSAGE = "message";
+    public static final String ERROR_STATUS_CODE = "status";
 
     /**
      * Maneja la excepción PriceNotFoundException (precio no encontrado).
@@ -22,9 +26,9 @@ public class GlobalExceptionHandler {
     public ResponseEntity<Map<String, Object>> handlePriceNotFoundException(PriceNotFoundException ex) {
         log.error("Error al buscar precios: {}", ex.getMessage(), ex);
         Map<String, Object> response = new HashMap<>();
-        response.put("error", "No se encontraron precios.");
-        response.put("message", ex.getMessage());
-        response.put("status", HttpStatus.NOT_FOUND.value());  // Código de estado 404.
+        response.put(ERROR_MESSAGE, "No se encontraron precios.");
+        response.put(ERROR_STATUS_MESSAGE, ex.getMessage());
+        response.put(ERROR_STATUS_CODE, HttpStatus.NOT_FOUND.value());  // Código de estado 404.
         return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
     }
 
@@ -35,9 +39,9 @@ public class GlobalExceptionHandler {
     public ResponseEntity<Map<String, Object>> handlePriceServiceException(PriceServiceException ex) {
         log.error("Error en el servicio de precios: {}", ex.getMessage(), ex);
         Map<String, Object> response = new HashMap<>();
-        response.put("error", "Error interno del servidor.");
-        response.put("message", ex.getMessage());
-        response.put("status", HttpStatus.INTERNAL_SERVER_ERROR.value());  // Código de estado 500.
+        response.put(ERROR_MESSAGE, "Error interno del servidor.");
+        response.put(ERROR_STATUS_MESSAGE, ex.getMessage());
+        response.put(ERROR_STATUS_CODE, HttpStatus.INTERNAL_SERVER_ERROR.value());  // Código de estado 500.
         return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
@@ -48,12 +52,24 @@ public class GlobalExceptionHandler {
     public ResponseEntity<Map<String, Object>> handleIllegalArgumentException(IllegalArgumentException ex) {
         log.warn("Solicitud incorrecta: {}", ex.getMessage(), ex);
         Map<String, Object> response = new HashMap<>();
-        response.put("error", "Solicitud incorrecta.");
-        response.put("message", ex.getMessage());
-        response.put("status", HttpStatus.BAD_REQUEST.value());  // Código de estado 400.
+        response.put(ERROR_MESSAGE, "Solicitud incorrecta.");
+        response.put(ERROR_STATUS_MESSAGE, ex.getMessage());
+        response.put(ERROR_STATUS_CODE, HttpStatus.BAD_REQUEST.value());  // Código de estado 400.
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
+    /**
+     * Maneja la excepción DecryptionException (error durante el proceso de desencriptación).
+     */
+    @ExceptionHandler(DecryptionException.class)
+    public ResponseEntity<Map<String, Object>> handleDecryptionException(DecryptionException ex) {
+        log.error("Error en el proceso de desencriptación: {}", ex.getMessage(), ex);
+        Map<String, Object> response = new HashMap<>();
+        response.put(ERROR_MESSAGE, "Credenciales inválidas");
+        response.put(ERROR_STATUS_MESSAGE, ex.getMessage());
+        response.put(ERROR_STATUS_CODE, HttpStatus.UNAUTHORIZED.value());  // Código de estado 401
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
     /**
      * Maneja cualquier excepción inesperada.
      */
@@ -61,9 +77,9 @@ public class GlobalExceptionHandler {
     public ResponseEntity<Map<String, Object>> handleGenericException(Exception ex) {
         log.error("Error inesperado: {}", ex.getMessage(), ex);
         Map<String, Object> response = new HashMap<>();
-        response.put("error", "Error inesperado.");
-        response.put("message", ex.getMessage());
-        response.put("status", HttpStatus.INTERNAL_SERVER_ERROR.value());  // Código de estado 500.
+        response.put(ERROR_MESSAGE, "Error inesperado.");
+        response.put(ERROR_STATUS_MESSAGE, ex.getMessage());
+        response.put(ERROR_STATUS_CODE, HttpStatus.INTERNAL_SERVER_ERROR.value());  // Código de estado 500.
         return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }
