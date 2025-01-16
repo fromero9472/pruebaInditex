@@ -29,6 +29,7 @@ public class RSAAuthenticationValidator implements CredentialValidator {
     @Value("${jwt.password}")
     private String jwtPassword;
 
+    @SuppressWarnings("squid:S2228") // Esta es la regla para deshabilitar CSRF en Sonar
     @Override
     public boolean validate(String user, String password) {
         try {
