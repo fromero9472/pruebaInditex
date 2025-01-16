@@ -35,25 +35,52 @@ public class DataLoadConfig {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd-HH.mm.ss");
 
         log.info("Cargando datos iniciales en la base de datos...");
+        // Instanciamos los objetos Price
+        Price price1 = new Price(
+                1L,
+                LocalDateTime.parse("2020-06-14T00:00:00"),
+                LocalDateTime.parse("2020-12-31T23:59:59"),
+                1L,
+                35455L,
+                0,
+                35.50,
+                "EUR");
 
-        // Creación de objetos de precio con datos de ejemplo
-        Price price1 = new Price(1L, LocalDateTime.parse("2020-06-14-00.00.00", formatter), LocalDateTime.parse("2020-12-31-23.59.59", formatter), 1L, 35455L, 0, 35.50, "EUR");
-        Price price2 = new Price(2L, LocalDateTime.parse("2020-06-14-15.00.00", formatter), LocalDateTime.parse("2020-06-14-18.30.00", formatter), 2L, 35455L, 1, 25.45, "EUR");
-        Price price3 = new Price(3L, LocalDateTime.parse("2020-06-15-00.00.00", formatter), LocalDateTime.parse("2020-06-15-11.00.00", formatter), 3L, 35455L, 1, 30.50, "EUR");
-        Price price4 = new Price(4L, LocalDateTime.parse("2020-06-15-16.00.00", formatter), LocalDateTime.parse("2020-12-31-23.59.59", formatter), 4L, 35455L, 1, 38.95, "EUR");
-        Price price5 = new Price(1L, LocalDateTime.parse("2020-06-14-00.00.00", formatter), LocalDateTime.parse("2020-12-31-23.59.59", formatter), 1L, 35455L, 1, 38.50, "EUR");
+        Price price2 = new Price(
+                1L,
+                LocalDateTime.parse("2020-06-14T15:00:00"),
+                LocalDateTime.parse("2020-06-14T18:30:00"),
+                2L,
+                35455L,
+                1,
+                25.45,
+                "EUR");
 
-        // Guardado de los precios en la base de datos a través del repositorio
+        Price price3 = new Price(
+                1L,
+                LocalDateTime.parse("2020-06-15T00:00:00"),
+                LocalDateTime.parse("2020-06-15T11:00:00"),
+                3L,
+                35455L,
+                1,
+                30.50,
+                "EUR");
+
+        Price price4 = new Price(
+                1L,
+                LocalDateTime.parse("2020-06-15T16:00:00"),
+                LocalDateTime.parse("2020-12-31T23:59:59"),
+                4L,
+                35455L,
+                1,
+                38.95,
+                "EUR");
+
+        // Guardamos las instancias en la base de datos usando el repositorio
         priceRepository.save(price1);
-        log.info("Precio 1 guardado: {}", price1);
         priceRepository.save(price2);
-        log.info("Precio 2 guardado: {}", price2);
         priceRepository.save(price3);
-        log.info("Precio 3 guardado: {}", price3);
         priceRepository.save(price4);
-        log.info("Precio 4 guardado: {}", price4);
-        priceRepository.save(price5);
-        log.info("Precio 5 guardado: {}", price5);
 
         log.info("Datos iniciales cargados correctamente.");
     }

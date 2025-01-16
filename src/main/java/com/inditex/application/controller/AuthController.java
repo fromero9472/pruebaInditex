@@ -16,14 +16,12 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Date;
 
 /**
- * Controlador para gestionar los endpoints relacionados con la autenticación de usuarios
- * y la generación de tokens JWT. Este controlador proporciona un endpoint para generar un token
- * si las credenciales del usuario son válidas.
+ * Controlador para la autenticación de usuarios y generación de tokens JWT.
  */
 @RestController
-@Tag(name = "Authentication", description = "Endpoints para gestionar la autenticación y generación de tokens")
+@Tag(name = "Authentication", description = "Endpoints para la autenticación y generación de tokens JWT")
 @RequestMapping("/v1/auth")
-@Slf4j  // Anotación de Lombok para habilitar logging en la clase.
+@Slf4j
 public class AuthController {
 
     private final AuthServicePort authService;
@@ -31,32 +29,24 @@ public class AuthController {
     @Value("${jwt.secret}")
     private String jwtSecret;
 
-    /**
-     * Constructor que inyecta el servicio de autenticación.
-     * @param authService Servicio para validar las credenciales del usuario.
-     */
     public AuthController(AuthServicePort authService) {
         this.authService = authService;
     }
 
     /**
-     * Endpoint para generar un token JWT.
+     * Endpoint para generar un token JWT si las credenciales son válidas.
      *
      * @param user Nombre del usuario.
      * @param contrasena Contraseña del usuario.
-     * @return El token JWT si las credenciales son válidas, o un mensaje de error si no lo son.
-     *
-     * <p>Este método valida las credenciales proporcionadas por el usuario. Si son correctas,
-     * genera un token JWT que será válido por 24 horas. Si las credenciales no son correctas,
-     * devuelve un error de autenticación.</p>
+     * @return Token JWT si las credenciales son correctas; error 401 si no lo son.
      */
     @Operation(
             summary = "Generar Token de Autenticación",
-            description = "Genera un token JWT válido por 24 horas si las credenciales proporcionadas son correctas.",
+            description = "Genera un token JWT válido por 24 horas si las credenciales son correctas.",
             responses = {
                     @ApiResponse(
                             responseCode = "200",
-                            description = "Token generado exitosamente",
+                            description = "Token generado correctamente",
                             content = @Content(mediaType = "text/plain", schema = @Schema(example = "Bearer <token>"))
                     ),
                     @ApiResponse(
@@ -71,36 +61,28 @@ public class AuthController {
             @RequestParam @Schema(description = "Usuario del sistema", example = "usuario", required = true) String user,
             @RequestParam @Schema(description = "Contraseña del usuario", example = "password", required = true) String contrasena) {
 
-        log.info("Generando token para el usuario: {}", user);  // Log para rastrear el inicio del proceso.
+        log.info("Generando token para el usuario: {}", user);
 
-        // Validación de las credenciales proporcionadas por el usuario
         if (authService.validateCredentials(user, contrasena)) {
-            log.info("Credenciales válidas para el usuario: {}", user);  // Log cuando las credenciales son válidas.
-
-            // Si las credenciales son válidas, se genera el token JWT
             String token = Jwts.builder()
-                    .setSubject(user) // Asocia el nombre de usuario al token
-                    .setIssuedAt(new Date()) // Establece la fecha de emisión del token
-                    .setExpiration(new Date(System.currentTimeMillis() + 86400000)) // Establece la expiración a 24 horas
-                    .signWith(SignatureAlgorithm.HS256, jwtSecret.getBytes()) // Firma el token con el algoritmo HS256 y la clave secreta
-                    .compact(); // Genera el token
+                    .setSubject(user)
+                    .setIssuedAt(new Date())
+                    .setExpiration(new Date(System.currentTimeMillis() + 86400000)) // 24 horas
+                    .signWith(SignatureAlgorithm.HS256, jwtSecret.getBytes())
+                    .compact();
 
-            log.info("Token generado exitosamente para el usuario: {}", user);  // Log de éxito cuando se genera el token.
-
-            return ResponseEntity.ok(token); // Retorna el token en una respuesta 200 OK
+            log.info("Token generado exitosamente para el usuario: {}", user);
+            return ResponseEntity.ok(token);
         } else {
-            log.warn("Credenciales inválidas para el usuario: {}", user);  // Log de advertencia cuando las credenciales son inválidas.
-
-            // Si las credenciales no son válidas, retorna un error 401
+            log.warn("Credenciales inválidas para el usuario: {}", user);
             return ResponseEntity.status(401).body("Credenciales inválidas");
         }
     }
 
     /**
-     * Establece el secreto del JWT.
-     * Este método es útil para la inyección de dependencias en pruebas.
+     * Establece el secreto JWT, útil para inyección en pruebas.
      *
-     * @param jwtSecret La clave secreta utilizada para firmar el token JWT.
+     * @param jwtSecret Clave secreta para firmar el token JWT.
      */
     public void setJwtSecret(String jwtSecret) {
         this.jwtSecret = jwtSecret;

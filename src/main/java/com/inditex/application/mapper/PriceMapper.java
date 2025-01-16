@@ -8,44 +8,38 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
- * Clase encargada de mapear entre las entidades de dominio y los DTOs (Data Transfer Objects).
- * Facilita la conversión de objetos entre las capas de la aplicación para separar las preocupaciones.
+ * Mapea entre las entidades de dominio y los DTOs.
  */
 @Component
-@Slf4j  // Anotación de Lombok para habilitar logging en la clase.
+@Slf4j
 public class PriceMapper {
 
-    /**
-     * Instancia de ModelMapper utilizada para realizar el mapeo de objetos entre entidades y DTOs.
-     */
     @Autowired
     private ModelMapper modelMapper;
 
     /**
-     * Convierte un objeto de tipo {@link Price} (entidad) a un {@link PriceOutDTO} (DTO).
-     * Este método mapea los atributos de la entidad {@link Price} a su correspondiente DTO.
+     * Convierte una entidad {@link Price} a un DTO {@link PriceOutDTO}.
      *
-     * @param product Objeto de tipo {@link Price} que representa la entidad de dominio.
-     * @return Un objeto {@link PriceOutDTO} con los datos de la entidad {@link Price}.
+     * @param product Entidad {@link Price} a convertir.
+     * @return DTO {@link PriceOutDTO} resultante.
      */
     public PriceOutDTO convertToDTO(Price product) {
-        log.info("Convirtiendo entidad Price a DTO: {}", product);  // Log para rastrear la conversión de la entidad.
+        log.info("Convirtiendo entidad Price a DTO: {}", product);
         PriceOutDTO dto = modelMapper.map(product, PriceOutDTO.class);
-        log.info("Conversión exitosa. DTO resultante: {}", dto);  // Log para confirmar que la conversión fue exitosa.
+        log.info("Conversión exitosa. DTO resultante: {}", dto);
         return dto;
     }
 
     /**
-     * Convierte un objeto de tipo {@link PriceOutDTO} a un {@link Price} (entidad).
-     * Este método mapea los atributos del DTO {@link PriceOutDTO} a su correspondiente entidad.
+     * Convierte un DTO {@link PriceOutDTO} a una entidad {@link Price}.
      *
-     * @param dto Objeto de tipo {@link PriceOutDTO} que representa los datos a convertir a entidad.
-     * @return Un objeto {@link Price} con los datos provenientes del DTO {@link PriceOutDTO}.
+     * @param dto DTO {@link PriceOutDTO} a convertir.
+     * @return Entidad {@link Price} resultante.
      */
     public Price convertToEntity(PriceOutDTO dto) {
-        log.info("Convirtiendo DTO PriceOutDTO a entidad: {}", dto);  // Log para rastrear la conversión del DTO.
+        log.info("Convirtiendo DTO PriceOutDTO a entidad: {}", dto);
         Price entity = modelMapper.map(dto, Price.class);
-        log.info("Conversión exitosa. Entidad resultante: {}", entity);  // Log para confirmar que la conversión fue exitosa.
+        log.info("Conversión exitosa. Entidad resultante: {}", entity);
         return entity;
     }
 }

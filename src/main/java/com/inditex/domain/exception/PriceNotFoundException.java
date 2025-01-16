@@ -1,33 +1,27 @@
 package com.inditex.domain.exception;
 
 /**
- * Excepción personalizada que se lanza cuando no se encuentran precios disponibles
- * para los parámetros proporcionados (por ejemplo, producto, marca y fecha).
- * Esta excepción es parte del manejo de errores en la aplicación.
- *
- * <p>Extiende de {@link RuntimeException} para indicar que es una excepción no verificada
- * (unchecked exception), que no es obligatoria de manejar con un bloque try-catch.</p>
+ * Excepción lanzada cuando no se encuentran precios para los parámetros dados.
+ * Extiende {@link RuntimeException} para ser una excepción no verificada.
  */
 public class PriceNotFoundException extends RuntimeException {
 
     /**
-     * Constructor para crear una nueva excepción con un mensaje de error específico.
+     * Constructor con mensaje de error.
      *
-     * @param message Mensaje detallado que describe la causa del error.
+     * @param message Descripción del error.
      */
     public PriceNotFoundException(String message) {
-        super(message); // Se llama al constructor de la clase padre (RuntimeException)
+        super(message);
     }
 
     /**
-     * Constructor para crear una nueva excepción con un mensaje de error y una causa.
-     * Este constructor es útil cuando se quiere asociar una excepción original a esta nueva
-     * excepción para proporcionar más contexto sobre el error.
+     * Constructor con mensaje de error y causa.
      *
-     * @param message El mensaje detallado del error.
-     * @param cause   La causa original de la excepción (puede ser otra excepción que se lanzó previamente).
+     * @param message Descripción del error.
+     * @param cause   Causa original de la excepción.
      */
     public PriceNotFoundException(String message, Throwable cause) {
-        super(message, cause); // Llama al constructor de RuntimeException con el mensaje y la causa.
+        super(message, cause);
     }
 }

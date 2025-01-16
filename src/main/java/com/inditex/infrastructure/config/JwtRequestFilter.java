@@ -16,24 +16,19 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Collections;
 
-/**
- * Filtro que intercepta las solicitudes HTTP para validar el token JWT y establecer la autenticación en el contexto de seguridad de la aplicación.
- * Este filtro se ejecuta una vez por solicitud y asegura que las peticiones autenticadas con JWT sean validadas correctamente.
- */
 @Slf4j
 @Configuration
 public class JwtRequestFilter extends OncePerRequestFilter {
 
     @Value("${jwt.secret}")
-    private String jwtSecret; // Clave secreta utilizada para firmar y verificar el JWT
+    private String jwtSecret; // Clave secreta para la validación del JWT
 
     /**
-     * Método que intercepta la solicitud HTTP, valida el JWT, y si es válido, establece el contexto de seguridad.
-     * Este método se ejecuta para cada solicitud que pase por este filtro.
+     * Intercepta la solicitud HTTP, valida el JWT y establece la autenticación en el contexto de seguridad.
      *
      * @param request La solicitud HTTP entrante.
-     * @param response La respuesta HTTP que se enviará de vuelta al cliente.
-     * @param chain La cadena de filtros de la solicitud.
+     * @param response La respuesta HTTP.
+     * @param chain La cadena de filtros.
      * @throws ServletException Si ocurre un error en el filtro.
      * @throws IOException Si ocurre un error de entrada/salida.
      */
@@ -41,53 +36,47 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
             throws ServletException, IOException {
 
-        // Recupera el encabezado Authorization de la solicitud
+        // Obtener el encabezado Authorization
         final String authorizationHeader = request.getHeader("Authorization");
 
-        // Si el encabezado Authorization está presente y comienza con "Bearer "
+        // Verificar si el encabezado Authorization está presente y es un Bearer Token
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
-            // Extraer el token JWT del encabezado Authorization
+            // Extraer el JWT
             String jwt = authorizationHeader.substring(7);
 
             try {
-                // Parsear el JWT y obtener las claims (afirmaciones) dentro del token
+                // Validar el JWT y obtener las claims
                 Claims claims = Jwts.parser()
-                        .setSigningKey(jwtSecret.getBytes()) // Clave secreta para verificar la firma del token
-                        .parseClaimsJws(jwt) // Parsear el JWT
-                        .getBody(); // Obtener el cuerpo del token (las claims)
+                        .setSigningKey(jwtSecret.getBytes())
+                        .parseClaimsJws(jwt)
+                        .getBody();
 
-                // Obtener el nombre de usuario del token (subject)
+                // Obtener el nombre de usuario del token
                 String username = claims.getSubject();
 
-                // Si el nombre de usuario está presente y no hay autenticación previa en el contexto de seguridad
+                // Si el usuario está presente y no hay autenticación previa
                 if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-                    // Crear un token de autenticación sin contraseña y con roles vacíos
+                    // Crear un token de autenticación sin contraseña ni roles
                     UsernamePasswordAuthenticationToken authToken =
-                            new UsernamePasswordAuthenticationToken(
-                                    username,
-                                    null,
-                                    Collections.emptyList() // Lista vacía de roles/authorities, podría ser mejor adaptarlo
-                            );
+                            new UsernamePasswordAuthenticationToken(username, null, Collections.emptyList());
 
                     // Establecer el token de autenticación en el contexto de seguridad
                     SecurityContextHolder.getContext().setAuthentication(authToken);
-                    log.info("Autenticación exitosa para el usuario: {}", username); // Log de éxito
+                    log.info("Autenticación exitosa para el usuario: {}", username);
                 }
 
             } catch (Exception e) {
                 // Si el JWT es inválido o ha expirado
-                log.warn("Token inválido o expirado: {}", e.getMessage()); // Log de advertencia con el mensaje de error
-
-                // Responder con un código de estado 401 (no autorizado) y un mensaje de error
+                log.warn("Token inválido o expirado: {}", e.getMessage());
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                 response.getWriter().write("Token inválido o expirado");
-                return;  // Detener la cadena de filtros si el token no es válido
+                return;  // Detener la cadena de filtros
             }
         } else {
-            log.debug("No se proporcionó un encabezado de autorización con el prefijo 'Bearer'"); // Log de debug
+            log.debug("No se proporcionó un encabezado de autorización con el prefijo 'Bearer'");
         }
 
-        // Continuar con el siguiente filtro de la cadena
+        // Continuar con el siguiente filtro
         chain.doFilter(request, response);
     }
 }

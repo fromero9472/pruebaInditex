@@ -12,49 +12,46 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-@Slf4j  // Lombok genera automáticamente el logger
+@Slf4j
 @Configuration
 public class AppConfig {
 
     /**
      * Define el bean para el repositorio de precios.
-     * Utiliza un adaptador que adapta el repositorio específico a la interfaz que se espera por el dominio.
+     * Utiliza un adaptador para adaptar el repositorio a la interfaz esperada.
      *
-     * @param priceRepository El repositorio de precios, proporcionado por Spring.
-     * @return Un adaptador para el repositorio de precios, implementando la interfaz PriceRepositoryPort.
+     * @param priceRepository El repositorio de precios.
+     * @return Un adaptador para el repositorio de precios.
      */
     @Bean
     public PriceRepositoryPort priceRepositoryPort(PriceRepository priceRepository) {
         log.info("Creando el bean PriceRepositoryPort");
-        // Retorna un adaptador que convierte la implementación del repositorio en un puerto adecuado para la capa de dominio.
         return new PriceRepositoryAdapter(priceRepository);
     }
 
     /**
      * Define el bean para el servicio de precios.
-     * Este servicio usa el repositorio de precios y un mapper para manejar la lógica de negocio relacionada con los precios.
+     * Gestiona la obtención de precios utilizando el repositorio y un mapper.
      *
-     * @param priceRepositoryPort El puerto para interactuar con el repositorio de precios.
-     * @param priceMapper El mapper utilizado para convertir entre las entidades y los DTOs.
-     * @return Un servicio que gestiona la obtención de precios.
+     * @param priceRepositoryPort El puerto para interactuar con el repositorio.
+     * @param priceMapper El mapper para convertir entre entidades y DTOs.
+     * @return Un servicio que maneja la obtención de precios.
      */
     @Bean
     public PriceServicePort priceServicePort(PriceRepositoryPort priceRepositoryPort, PriceMapper priceMapper) {
         log.info("Creando el bean PriceServicePort");
-        // Retorna una instancia de PriceService, que es un servicio de aplicación que maneja la obtención de precios.
         return new PriceService(priceRepositoryPort, priceMapper);
     }
 
     /**
      * Define el bean para el servicio de autenticación.
-     * El servicio de autenticación gestiona la validación de credenciales de usuarios.
+     * Valida las credenciales de usuario.
      *
      * @return Un servicio que valida las credenciales del usuario.
      */
     @Bean
     public AuthServicePort authServicePort() {
         log.info("Creando el bean AuthServicePort");
-        // Retorna una instancia de AuthService, que es el servicio responsable de validar las credenciales de usuario.
         return new AuthService();
     }
 }
