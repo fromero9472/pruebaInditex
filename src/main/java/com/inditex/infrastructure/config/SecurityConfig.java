@@ -27,32 +27,25 @@ public class SecurityConfig {
         this.jwtRequestFilter = jwtRequestFilter;
     }
 
-    /**
-     * Configura las reglas de seguridad de la aplicación.
-     */
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         log.info("Configurando reglas de seguridad.");
 
+        // Deshabilitamos CSRF porque usamos JWT para la autenticación. Las solicitudes se validan con el token en el encabezado Authorization.
         http.csrf().disable()
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS) // Stateless, sin sesiones
+                .and()
                 .authorizeRequests()
-                .antMatchers("/v1/auth/generate-token").permitAll()  // Permite acceso sin autenticación
-                .antMatchers("/swagger-ui/**", "/swagger-ui.html", "/v3/api-docs/**", "/swagger-resources/**", "/webjars/**").permitAll()  // Rutas Swagger públicas
-                .anyRequest().authenticated()  // Requiere autenticación para las demás rutas
+                .antMatchers("/v1/auth/generate-token").permitAll() // Permitir acceso público al login
+                .antMatchers("/swagger-ui/**", "/swagger-ui.html", "/v3/api-docs/**", "/swagger-resources/**", "/webjars/**").permitAll() // Permitir acceso público a Swagger
+                .anyRequest().authenticated() // Requerir autenticación para cualquier otra ruta
                 .and()
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                .and()
-                .exceptionHandling()
-                .accessDeniedHandler((request, response, accessDeniedException) -> {
-                    log.debug("Access Denied: " + request.getRequestURI());
-                    response.sendError(HttpServletResponse.SC_FORBIDDEN, "Forbidden");
-                });
-
-        http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
-        log.info("Filtro JWT agregado.");
+                .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class); // Agregar filtro JWT antes del filtro de autenticación predeterminado
 
         return http.build();
     }
+
+
 
     /**
      * Configura el codificador de contraseñas con BCrypt.
