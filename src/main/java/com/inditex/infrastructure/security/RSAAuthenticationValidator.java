@@ -5,11 +5,15 @@ import com.inditex.domain.port.out.CredentialValidator;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.security.InvalidKeyException;
 import java.security.KeyFactory;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
@@ -61,7 +65,8 @@ public class RSAAuthenticationValidator implements CredentialValidator {
             // Desencriptar
             byte[] decryptedBytes = cipher.doFinal(encryptedBytes);
             return new String(decryptedBytes, StandardCharsets.UTF_8);
-        } catch (Exception e) {
+        } catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException
+                 | IllegalBlockSizeException | BadPaddingException e) {
             // Lanzar la excepción personalizada si ocurre algún error durante el proceso
             throw new DecryptionException("Error al desencriptar los datos.");
         }
