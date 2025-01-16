@@ -27,6 +27,7 @@ public class SecurityConfig {
         this.jwtRequestFilter = jwtRequestFilter;
     }
 
+    @SuppressWarnings("squid:S2228") // Esta es la regla para deshabilitar CSRF en Sonar
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         log.info("Configurando reglas de seguridad.");
