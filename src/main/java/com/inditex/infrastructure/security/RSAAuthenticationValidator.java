@@ -58,7 +58,7 @@ public class RSAAuthenticationValidator implements CredentialValidator {
             return new String(decryptedBytes, StandardCharsets.UTF_8);
         } catch (Exception e) {
             // Lanzar la excepción personalizada si ocurre algún error durante el proceso
-            throw new DecryptionException("Error al desencriptar los datos.", e);
+            throw new DecryptionException("Error al desencriptar los datos.");
         }
     }
 }
