@@ -19,9 +19,7 @@ import java.util.Optional;
 import com.inditex.domain.model.Price;
 
 /**
- * Servicio que gestiona la obtención de precios de productos según los parámetros proporcionados.
- * Utiliza un repositorio para buscar los precios y los convierte a un formato adecuado para el cliente.
- * Este servicio maneja excepciones específicas para informar de errores relacionados con la obtención de precios.
+ * Servicio para obtener precios de productos según marca, producto y fecha.
  */
 @Primary
 @Service
@@ -29,81 +27,58 @@ import com.inditex.domain.model.Price;
 public class PriceService implements PriceServicePort {
 
     private final PriceMapper priceMapper;
-
     private final PriceRepositoryPort priceRepositoryPort;
 
-    /**
-     * Constructor que inyecta las dependencias necesarias para el servicio de precios.
-     *
-     * @param priceRepository El repositorio utilizado para acceder a los datos de los precios.
-     * @param priceMapper El mapeador para convertir entidades a DTOs.
-     */
     public PriceService(@Qualifier("priceRepositoryPort") PriceRepositoryPort priceRepository, PriceMapper priceMapper) {
         this.priceRepositoryPort = priceRepository;
         this.priceMapper = priceMapper;
     }
 
     /**
-     * Obtiene un único precio basado en los parámetros proporcionados: ID de marca, ID de producto y fecha de aplicación.
-     * El precio obtenido es el de mayor prioridad. Si no se encuentra el precio, se lanza una excepción {@link PriceNotFoundException}.
+     * Obtiene un único precio según marca, producto y fecha.
      *
-     * @param params Parámetros de entrada, que incluyen la marca, producto y fecha de aplicación.
-     * @return El precio encontrado convertido a un DTO {@link PriceOutDTO}.
-     * @throws PriceServiceException Si ocurre un error inesperado durante la ejecución.
-     * @throws PriceNotFoundException Si no se encuentra ningún precio para los parámetros proporcionados.
-     * @throws IllegalArgumentException Si los parámetros de entrada son inválidos (null o incorrectos).
+     * @param params Parámetros con la marca, producto y fecha de aplicación.
+     * @return Precio convertido a DTO.
+     * @throws PriceServiceException Si ocurre un error inesperado.
+     * @throws PriceNotFoundException Si no se encuentra el precio.
      */
     public PriceOutDTO getSinglePrice(PriceInDTO params) {
         try {
-            // Extraer parámetros del DTO
+            // Validación de parámetros
             Long brandId = params.getBrandId();
             Long productId = params.getProductId();
-
-            // Validar que los parámetros no sean nulos
             if (brandId == null || productId == null || params.getApplicationDate() == null) {
-                throw new IllegalArgumentException("Los parámetros 'brandId', 'productId' y 'applicationDate' son obligatorios.");
+                throw new IllegalArgumentException("Parámetros 'brandId', 'productId' y 'applicationDate' son obligatorios.");
             }
 
-            // Parsear la fecha de aplicación a LocalDateTime
             LocalDateTime applicationDate = parseStringToLocalDateTime(params.getApplicationDate());
+            log.info("Obteniendo precio para Marca ID {}, Producto ID {}, Fecha {}", brandId, productId, applicationDate);
 
-            log.info("Obteniendo el precio para la Marca ID {}, Producto ID {}, Fecha de Aplicación {}", brandId, productId, applicationDate);
+            // Obtener el precio más relevante desde el repositorio
+            Price price = priceRepositoryPort.findTopPriceByBrandIdAndProductIdAndApplicationDate(brandId, productId, applicationDate);
 
-            // Llamada al repositorio para obtener el precio más relevante
-            Optional<Price> optionalPrice = priceRepositoryPort.findTopPriceByBrandIdAndProductIdAndApplicationDate(
-                    brandId, productId, applicationDate);
+            return priceMapper.convertToDTO(price);
 
-            // Manejo del resultado: si no se encuentra, lanzar excepción PriceNotFoundException
-            return optionalPrice.map(priceMapper::convertToDTO)
-                    .orElseThrow(() -> {
-                        log.warn("No se encontraron precios para los parámetros proporcionados");
-                        return new PriceNotFoundException("No se encontraron precios para la Marca ID " + brandId + " y Producto ID " + productId);
-                    });
         } catch (IllegalArgumentException e) {
-            // Capturar y loggear errores de parámetros incorrectos
-            log.error("Parámetros inválidos proporcionados para la solicitud de obtener precio", e);
-            throw e;  // Propagar la excepción tal cual se recibió
+            log.error("Parámetros inválidos para obtener precio", e);
+            throw e;
         } catch (PriceNotFoundException e) {
-            // Capturar y loggear cuando no se encuentran precios
-            log.error("No se encontró el precio para los parámetros proporcionados", e);
-            throw e;  // Propagar la excepción personalizada
+            log.error("Precio no encontrado", e);
+            throw e;
         } catch (Exception e) {
-            // Capturar y loggear errores inesperados, lanzando una excepción personalizada
-            log.error("Error inesperado procesando la solicitud de obtener precio", e);
-            throw new PriceServiceException("Error inesperado procesando la solicitud de obtener precio", e);  // Excepción personalizada
+            log.error("Error inesperado al obtener el precio", e);
+            throw new PriceServiceException("Error inesperado procesando la solicitud de obtener precio", e);
         }
     }
 
     /**
-     * Convierte una cadena de texto que representa una fecha en formato "yyyy-MM-dd-HH.mm.ss" a un objeto LocalDateTime.
+     * Convierte una fecha en formato "yyyy-MM-dd-HH.mm.ss" a LocalDateTime.
      *
-     * @param dateString La cadena de texto que representa la fecha a convertir.
-     * @return Un objeto LocalDateTime correspondiente a la cadena proporcionada.
+     * @param dateString Cadena de texto con la fecha.
+     * @return LocalDateTime correspondiente.
      */
     private LocalDateTime parseStringToLocalDateTime(String dateString) {
-        // Definir el formato esperado de la fecha
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd-HH.mm.ss");
-        // Parsear la fecha
         return LocalDateTime.parse(dateString, formatter);
     }
 }

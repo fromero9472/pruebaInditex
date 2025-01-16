@@ -8,34 +8,28 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-/**
- * Configuración de OpenAPI para la documentación de la API.
- * Incluye la configuración básica para generar la documentación interactiva y el esquema de seguridad con JWT para autenticar las solicitudes.
- */
 @Slf4j
 @Configuration
 public class OpenApiConfig {
 
     /**
-     * Configura la documentación OpenAPI para la API de precios, proporcionando información básica sobre la API
-     * y la configuración de seguridad utilizando un esquema JWT (JSON Web Token) en el encabezado de autorización.
-     * Esta configuración permite la generación de una interfaz Swagger interactiva que describe la API y su funcionamiento.
+     * Configura la documentación OpenAPI con información básica y esquema de seguridad JWT.
      *
-     * @return Configuración personalizada de OpenAPI para la documentación de la API.
+     * @return Configuración personalizada de OpenAPI.
      */
     @Bean
     public OpenAPI customOpenAPI() {
-        log.info("Inicializando configuración de OpenAPI para la API de Precios."); // Log para indicar que la configuración está siendo inicializada
+        log.info("Inicializando configuración de OpenAPI.");
         return new OpenAPI()
                 .info(new Info()
-                        .title("API Pricing") // Título de la API
-                        .description("Api para obtener informacion de Producto")) // Descripción de la API
-                .addSecurityItem(new SecurityRequirement().addList("bearerAuth")) // Añade el requisito de seguridad con JWT
+                        .title("API Pricing")
+                        .description("Api para obtener información de Producto"))
+                .addSecurityItem(new SecurityRequirement().addList("bearerAuth"))
                 .components(new io.swagger.v3.oas.models.Components()
-                        .addSecuritySchemes("bearerAuth", new SecurityScheme() // Definición del esquema de seguridad JWT
-                                .name("Authorization") // Nombre del esquema de seguridad
-                                .type(SecurityScheme.Type.HTTP) // Tipo de esquema de seguridad (HTTP)
-                                .scheme("bearer") // Tipo de autenticación (Bearer)
-                                .bearerFormat("JWT"))); // Formato del token (JWT)
+                        .addSecuritySchemes("bearerAuth", new SecurityScheme()
+                                .name("Authorization")
+                                .type(SecurityScheme.Type.HTTP)
+                                .scheme("bearer")
+                                .bearerFormat("JWT")));
     }
 }
