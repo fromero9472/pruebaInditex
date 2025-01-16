@@ -44,11 +44,15 @@ public class RSAAuthenticationValidator implements CredentialValidator {
 
             // Validar si el usuario y la contraseña coinciden
             return user.equals(decryptedUser) && password.equals(decryptedPassword);
-        } catch (DecryptionException | IOException e) {
-            e.printStackTrace();
-            return false;
+        } catch (DecryptionException e) {
+            // Lanza la excepción personalizada DecryptionException si ocurre un error en la desencriptación
+            throw new DecryptionException("Error al desencriptar los datos de usuario o contraseña.", e);
+        } catch (IOException e) {
+            // Lanza una excepción personalizada si ocurre un error al leer el archivo de la clave privada
+            throw new DecryptionException("Error al leer el archivo de clave privada.", e);
         } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
-            throw new RuntimeException(e);
+            // Lanza una excepción personalizada si ocurre un error al generar la clave privada
+            throw new DecryptionException("Error al generar la clave privada desde el archivo.", e);
         }
     }
 
