@@ -6,11 +6,14 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.Cipher;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.security.KeyFactory;
+import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
+import java.security.spec.InvalidKeySpecException;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.util.Base64;
 
@@ -37,9 +40,11 @@ public class RSAAuthenticationValidator implements CredentialValidator {
 
             // Validar si el usuario y la contraseña coinciden
             return user.equals(decryptedUser) && password.equals(decryptedPassword);
-        } catch (Exception e) {
+        } catch (DecryptionException | IOException e) {
             e.printStackTrace();
             return false;
+        } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
+            throw new RuntimeException(e);
         }
     }
 
