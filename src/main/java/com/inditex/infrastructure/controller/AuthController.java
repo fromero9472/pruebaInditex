@@ -1,6 +1,6 @@
-package com.inditex.application.controller;
+package com.inditex.infrastructure.controller;
 
-import com.inditex.domain.port.in.AuthServicePort;
+import com.inditex.domain.port.in.ValidateCredential;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.swagger.v3.oas.annotations.Operation;
@@ -21,12 +21,12 @@ import java.util.Date;
 @Slf4j
 public class AuthController {
 
-    private final AuthServicePort authService;
+    private final ValidateCredential authService;
 
     @Value("${jwt.secret}")
     private String jwtSecret;
 
-    public AuthController(AuthServicePort authService) {
+    public AuthController(ValidateCredential authService) {
         this.authService = authService;
     }
 

@@ -1,4 +1,4 @@
-package com.inditex.domain.exception;
+package com.inditex.application.exception;
 
 public class DecryptionException extends RuntimeException {
     public DecryptionException(String message) {

@@ -1,7 +1,9 @@
 package com.inditex.infrastructure.repository;
 
-import com.inditex.domain.exception.PriceNotFoundException;
+import com.inditex.application.exception.PriceNotFoundException;
+import com.inditex.application.mapper.PriceMapper;
 import com.inditex.domain.model.Price;
+import com.inditex.infrastructure.entity.PriceEntity;
 import com.inditex.domain.port.out.PriceRepositoryPort;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
@@ -18,10 +20,12 @@ import java.util.Optional;
 public class PriceRepositoryAdapter implements PriceRepositoryPort {
 
     private final PriceRepository priceRepository;
+    private final PriceMapper priceMapper;
 
     @Autowired
-    public PriceRepositoryAdapter(PriceRepository priceRepository) {
+    public PriceRepositoryAdapter(PriceRepository priceRepository, PriceMapper priceMapper) {
         this.priceRepository = priceRepository;
+        this.priceMapper = priceMapper;
     }
 
     /**
@@ -30,10 +34,10 @@ public class PriceRepositoryAdapter implements PriceRepositoryPort {
     @Override
     public Price findTopPriceByBrandIdAndProductIdAndApplicationDate(Long brandId, Long productId, LocalDateTime applicationDate) {
         // Delegar la llamada al repositorio de Spring Data JPA
-        Optional<Price> price = priceRepository.findTopByBrandIdAndProductIdAndStartDateLessThanEqualAndEndDateGreaterThanEqualOrderByPriorityDesc(
+        Optional<PriceEntity> price = priceRepository.findTopByBrandIdAndProductIdAndStartDateLessThanEqualAndEndDateGreaterThanEqualOrderByPriorityDesc(
                 brandId, productId, applicationDate, applicationDate);
+        PriceEntity entity =  price.orElseThrow(() -> new PriceNotFoundException("Precio no encontrado para el producto y marca especificados"));
 
-        // Si no se encuentra un precio, lanzar una excepción o devolver un valor adecuado
-        return price.orElseThrow(() -> new PriceNotFoundException("Precio no encontrado para el producto y marca especificados"));
+        return priceMapper.convertToDTO(entity);
     }
 }

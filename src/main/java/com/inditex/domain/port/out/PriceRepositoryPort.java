@@ -1,6 +1,7 @@
 package com.inditex.domain.port.out;
 
 import com.inditex.domain.model.Price;
+import com.inditex.infrastructure.entity.PriceEntity;
 
 import java.time.LocalDateTime;
 

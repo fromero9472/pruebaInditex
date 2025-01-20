@@ -1,11 +1,10 @@
-package com.inditex.domain.service;
+package com.inditex.application.service;
 
-import com.inditex.application.dto.PriceInDTO;
-import com.inditex.application.dto.PriceOutDTO;
-import com.inditex.application.mapper.PriceMapper;
-import com.inditex.domain.exception.PriceNotFoundException;
-import com.inditex.domain.exception.PriceServiceException;
-import com.inditex.domain.port.in.PriceServicePort;
+import com.inditex.domain.model.PriceInDTO;
+import com.inditex.domain.model.Price;
+import com.inditex.application.exception.PriceNotFoundException;
+import com.inditex.application.exception.PriceServiceException;
+import com.inditex.domain.port.in.GetSinglePrice;
 import com.inditex.domain.port.out.PriceRepositoryPort;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Primary;
@@ -14,9 +13,6 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Optional;
-
-import com.inditex.domain.model.Price;
 
 /**
  * Servicio para obtener precios de productos según marca, producto y fecha.
@@ -24,14 +20,12 @@ import com.inditex.domain.model.Price;
 @Primary
 @Service
 @Slf4j
-public class PriceService implements PriceServicePort {
+public class PriceService implements GetSinglePrice {
 
-    private final PriceMapper priceMapper;
     private final PriceRepositoryPort priceRepositoryPort;
 
-    public PriceService(@Qualifier("priceRepositoryPort") PriceRepositoryPort priceRepository, PriceMapper priceMapper) {
+    public PriceService(@Qualifier("priceRepositoryPort") PriceRepositoryPort priceRepository) {
         this.priceRepositoryPort = priceRepository;
-        this.priceMapper = priceMapper;
     }
 
     /**
@@ -42,7 +36,8 @@ public class PriceService implements PriceServicePort {
      * @throws PriceServiceException Si ocurre un error inesperado.
      * @throws PriceNotFoundException Si no se encuentra el precio.
      */
-    public PriceOutDTO getSinglePrice(PriceInDTO params) {
+    @Override
+    public Price getSinglePrice(PriceInDTO params) {
         try {
             // Validación de parámetros
             Long brandId = params.getBrandId();
@@ -57,7 +52,7 @@ public class PriceService implements PriceServicePort {
             // Obtener el precio más relevante desde el repositorio
             Price price = priceRepositoryPort.findTopPriceByBrandIdAndProductIdAndApplicationDate(brandId, productId, applicationDate);
 
-            return priceMapper.convertToDTO(price);
+            return price;
 
         } catch (IllegalArgumentException e) {
             log.error("Parámetros inválidos para obtener precio", e);

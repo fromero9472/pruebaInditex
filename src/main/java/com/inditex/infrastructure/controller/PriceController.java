@@ -1,8 +1,8 @@
-package com.inditex.application.controller;
+package com.inditex.infrastructure.controller;
 
-import com.inditex.application.dto.PriceInDTO;
-import com.inditex.application.dto.PriceOutDTO;
-import com.inditex.domain.port.in.PriceServicePort;
+import com.inditex.domain.model.PriceInDTO;
+import com.inditex.domain.model.Price;
+import com.inditex.domain.port.in.GetSinglePrice;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -25,7 +25,7 @@ import org.springframework.web.bind.annotation.*;
 public class PriceController {
 
     @Autowired
-    private PriceServicePort priceService;
+    private GetSinglePrice priceService;
 
     /**
      * Endpoint para obtener el precio de un producto según los parámetros proporcionados.
@@ -43,7 +43,7 @@ public class PriceController {
             @ApiResponse(
                     responseCode = "200",
                     description = "Operación exitosa. Devuelve el precio.",
-                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = PriceOutDTO.class))
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = Price.class))
             ),
             @ApiResponse(responseCode = "204", description = "Sin contenido. No se encontraron precios."),
             @ApiResponse(responseCode = "400", description = "Solicitud incorrecta. Verifica los parámetros."),
@@ -51,7 +51,7 @@ public class PriceController {
             @ApiResponse(responseCode = "500", description = "Error interno del servidor.")
     })
     @GetMapping("/getPrice")
-    public ResponseEntity<PriceOutDTO> getPriceList(
+    public ResponseEntity<Price> getPriceList(
             @Parameter(description = "ID de la marca", example = "1", required = true)
             @RequestParam Long brandId,
 
@@ -65,7 +65,7 @@ public class PriceController {
                 productId, brandId, applicationDate);
 
         PriceInDTO params = new PriceInDTO(productId, brandId, applicationDate);
-        PriceOutDTO priceOutDTO = priceService.getSinglePrice(params);
+        Price priceOutDTO = priceService.getSinglePrice(params);
 
         return ResponseEntity.ok(priceOutDTO);
 

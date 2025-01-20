@@ -1,7 +1,7 @@
 package com.inditex.infrastructure.exception;
 
-import com.inditex.domain.exception.PriceNotFoundException;
-import com.inditex.domain.exception.PriceServiceException;
+import com.inditex.application.exception.PriceNotFoundException;
+import com.inditex.application.exception.PriceServiceException;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.HttpStatus;

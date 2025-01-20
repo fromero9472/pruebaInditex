@@ -1,12 +1,13 @@
 package com.inditex.domain.service;
 
-import com.inditex.application.dto.PriceInDTO;
-import com.inditex.application.dto.PriceOutDTO;
-import com.inditex.application.mapper.PriceMapper;
-import com.inditex.domain.exception.PriceNotFoundException;
-import com.inditex.domain.exception.PriceServiceException;
+import com.inditex.application.service.PriceService;
+import com.inditex.domain.model.PriceInDTO;
 import com.inditex.domain.model.Price;
+import com.inditex.application.mapper.PriceMapper;
+import com.inditex.application.exception.PriceNotFoundException;
+import com.inditex.application.exception.PriceServiceException;
 import com.inditex.domain.port.out.PriceRepositoryPort;
+import com.inditex.infrastructure.entity.PriceEntity;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -16,13 +17,12 @@ import org.springframework.test.context.ContextConfiguration;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ContextConfiguration
-class PriceServiceTest {
+class GetSinglePriceTest {
 
     @Mock
     private PriceRepositoryPort priceRepository;
@@ -54,22 +54,12 @@ class PriceServiceTest {
                 eq(brandId), eq(productId), eq(parseStringToLocalDateTime(dateTime))))
                 .thenReturn(mockPrice);
 
-        PriceOutDTO mockDTO = new PriceOutDTO(
-                1L,
-                parseStringToLocalDateTime("2020-06-14-00.00.00"),
-                parseStringToLocalDateTime("2020-12-31-23.59.59"),
-                brandId, productId, 1, 38.50, "EUR");
-
-        when(priceMapper.convertToDTO(mockPrice)).thenReturn(mockDTO);
-
         // Act
         PriceInDTO params = new PriceInDTO(productId, brandId, dateTime);
-        PriceOutDTO result = priceService.getSinglePrice(params);
+        Price result = priceService.getSinglePrice(params);
 
         // Assert
         verify(priceRepository, times(1)).findTopPriceByBrandIdAndProductIdAndApplicationDate(brandId, productId, parseStringToLocalDateTime(dateTime));
-        verify(priceMapper, times(1)).convertToDTO(mockPrice);
-        assertEquals(mockDTO, result);
     }
 
     @Test

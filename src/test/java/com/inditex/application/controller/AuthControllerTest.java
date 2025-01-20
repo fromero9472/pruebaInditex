@@ -1,17 +1,14 @@
 package com.inditex.application.controller;
 
-import com.inditex.domain.port.in.AuthServicePort;
+import com.inditex.domain.port.in.ValidateCredential;
+import com.inditex.infrastructure.controller.AuthController;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ContextConfiguration;
-
-import java.util.Date;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
@@ -19,7 +16,7 @@ import static org.mockito.Mockito.when;
 @ContextConfiguration
 class AuthControllerTest {
 
-    private AuthServicePort authServicePort;
+    private ValidateCredential validateCredential;
     private AuthController authController;
 
     private final String jwtSecret = "dd53d7a7-0537-4c0c-9150-5fede45c8ce6"; // Valor manual
@@ -27,10 +24,10 @@ class AuthControllerTest {
     @BeforeEach
     void setUp() {
         // Crear mock del servicio de autenticación
-        authServicePort = Mockito.mock(AuthServicePort.class);
+        validateCredential = Mockito.mock(ValidateCredential.class);
 
         // Instanciar el controlador con el mock
-        authController = new AuthController(authServicePort);
+        authController = new AuthController(validateCredential);
 
         // Inyectar manualmente el valor del secret (simulación)
         authController.setJwtSecret(jwtSecret);
@@ -42,7 +39,7 @@ class AuthControllerTest {
         String password = "password123";
 
         // Mockear el comportamiento del servicio
-        when(authServicePort.validateCredentials(username, password)).thenReturn(true);
+        when(validateCredential.validateCredentials(username, password)).thenReturn(true);
 
         // Llamar al método del controlador
         ResponseEntity<String> response = authController.generateToken(username, password);
@@ -78,7 +75,7 @@ class AuthControllerTest {
         String password = "wrongpassword";
 
         // Mockear el comportamiento del servicio
-        when(authServicePort.validateCredentials(username, password)).thenReturn(false);
+        when(validateCredential.validateCredentials(username, password)).thenReturn(false);
 
         // Llamar al método del controlador
         ResponseEntity<String> response = authController.generateToken(username, password);

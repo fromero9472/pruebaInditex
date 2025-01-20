@@ -1,5 +1,6 @@
 package com.inditex.domain.service;
 
+import com.inditex.application.service.AuthService;
 import com.inditex.domain.port.out.CredentialValidator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -11,7 +12,7 @@ import static org.mockito.Mockito.when;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class AuthServiceTest {
+class AuthServiceImplTest {
 
     @InjectMocks
     private AuthService authService;

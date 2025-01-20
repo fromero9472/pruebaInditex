@@ -1,12 +1,12 @@
-package com.inditex.domain.service;
+package com.inditex.application.service;
 
-import com.inditex.domain.port.in.AuthServicePort;
+import com.inditex.domain.port.in.ValidateCredential;
 import com.inditex.domain.port.out.CredentialValidator;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 @Primary
 @Service
-public class AuthService implements AuthServicePort {
+public class AuthService implements ValidateCredential {
 
     private final CredentialValidator credentialValidator;
 

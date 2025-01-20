@@ -1,8 +1,9 @@
 package com.inditex.application.controller;
 
-import com.inditex.application.dto.PriceInDTO;
-import com.inditex.application.dto.PriceOutDTO;
-import com.inditex.domain.port.in.PriceServicePort;
+import com.inditex.domain.model.PriceInDTO;
+import com.inditex.domain.model.Price;
+import com.inditex.domain.port.in.GetSinglePrice;
+import com.inditex.infrastructure.controller.PriceController;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -11,16 +12,13 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
 class PriceControllerTest {
 
     @Mock
-    private PriceServicePort priceService;
+    private GetSinglePrice priceService;
 
     @InjectMocks
     private PriceController priceController;
@@ -40,7 +38,7 @@ class PriceControllerTest {
     @Test
     void testGetPriceList_Success() {
         // Crear un DTO de respuesta esperado
-        PriceOutDTO expectedPriceOutDTO = new PriceOutDTO();
+        Price expectedPriceOutDTO = new Price();
 
         expectedPriceOutDTO.setProductId(35455L);
         expectedPriceOutDTO.setBrandId(2L);
@@ -50,7 +48,7 @@ class PriceControllerTest {
         when(priceService.getSinglePrice(params)).thenReturn(expectedPriceOutDTO);
 
         // Llamar al método del controlador
-        ResponseEntity<PriceOutDTO> response = priceController.getPriceList(params.getBrandId(),params.getProductId(),params.getApplicationDate());
+        ResponseEntity<Price> response = priceController.getPriceList(params.getBrandId(),params.getProductId(),params.getApplicationDate());
 
         // Verificar que la respuesta es correcta
         assertEquals(HttpStatus.OK, response.getStatusCode());

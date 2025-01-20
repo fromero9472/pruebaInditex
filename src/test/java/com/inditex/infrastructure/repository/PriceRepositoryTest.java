@@ -1,7 +1,8 @@
 package com.inditex.infrastructure.repository;
 
-import com.inditex.domain.exception.PriceNotFoundException;
+import com.inditex.application.exception.PriceNotFoundException;
 import com.inditex.domain.model.Price;
+import com.inditex.infrastructure.entity.PriceEntity;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -39,8 +40,8 @@ class PriceRepositoryTest {
     @Test
     public void testFindTopPriceByBrandIdAndProductIdAndApplicationDate_PriceFound() {
         // Crear un objeto Price simulado que se devolverá envuelto en un Optional
-        Price mockPrice = new Price(1L, brandId, applicationDate, applicationDate.plusDays(1), 1L, productId, 1, 100.0, "USD");
-        Optional<Price> mockOptionalPrice = Optional.of(mockPrice);
+        PriceEntity mockPrice = new PriceEntity(1L, brandId, applicationDate, applicationDate.plusDays(1), 1L, productId, 1, 100.0, "USD");
+        Optional<PriceEntity> mockOptionalPrice = Optional.of(mockPrice);
 
         // Configurar el mock para devolver el Optional con el precio simulado cuando se invoque el método
         when(priceRepository.findTopByBrandIdAndProductIdAndStartDateLessThanEqualAndEndDateGreaterThanEqualOrderByPriorityDesc(

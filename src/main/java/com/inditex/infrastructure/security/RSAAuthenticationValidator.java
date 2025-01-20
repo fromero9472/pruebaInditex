@@ -1,6 +1,6 @@
 package com.inditex.infrastructure.security;
 
-import com.inditex.domain.exception.DecryptionException;
+import com.inditex.application.exception.DecryptionException;
 import com.inditex.domain.port.out.CredentialValidator;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;

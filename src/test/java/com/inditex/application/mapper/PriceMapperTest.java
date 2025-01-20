@@ -1,6 +1,6 @@
 package com.inditex.application.mapper;
-import com.inditex.application.dto.PriceOutDTO;
 import com.inditex.domain.model.Price;
+import com.inditex.infrastructure.entity.PriceEntity;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -31,18 +31,18 @@ class PriceMapperTest {
     @Test
     public void testConvertToDTO() {
         // Crear un objeto Price para la prueba
-        Price price = new Price(1L, 1L, LocalDateTime.of(2025, 1, 1, 0, 0, 0, 0),
+        PriceEntity price = new PriceEntity(1L, 1L, LocalDateTime.of(2025, 1, 1, 0, 0, 0, 0),
                 LocalDateTime.of(2025, 1, 2, 0, 0, 0, 0), 1L, 1L, 1, 100.0, "USD");
 
         // Crear el PriceOutDTO esperado
-        PriceOutDTO priceOutDTO = new PriceOutDTO(1L, 1L, LocalDateTime.of(2025, 1, 1, 0, 0, 0, 0),
+        Price priceOutDTO = new Price(1L, 1L, LocalDateTime.of(2025, 1, 1, 0, 0, 0, 0),
                 LocalDateTime.of(2025, 1, 2, 0, 0, 0, 0), 1L, 1L, 1, 100.0, "USD");
 
         // Configurar el comportamiento del mock de ModelMapper
-        when(modelMapper.map(price, PriceOutDTO.class)).thenReturn(priceOutDTO);
+        when(modelMapper.map(price, Price.class)).thenReturn(priceOutDTO);
 
         // Ejecutar la conversión
-        PriceOutDTO result = priceMapper.convertToDTO(price);
+        Price result = priceMapper.convertToDTO(price);
 
         // Verificar que el resultado no sea nulo y sea igual al esperado
         assertNotNull(result);
@@ -52,18 +52,18 @@ class PriceMapperTest {
     @Test
     public void testConvertToEntity() {
         // Crear un objeto PriceOutDTO para la prueba
-        PriceOutDTO priceOutDTO = new PriceOutDTO(1L, 1L, LocalDateTime.of(2025, 1, 1, 0, 0, 0, 0),
+        Price priceOutDTO = new Price(1L, 1L, LocalDateTime.of(2025, 1, 1, 0, 0, 0, 0),
                 LocalDateTime.of(2025, 1, 2, 0, 0, 0, 0), 1L, 1L, 1, 100.0, "USD");
 
         // Crear el Price esperado
-        Price price = new Price(1L, 1L, LocalDateTime.of(2025, 1, 1, 0, 0, 0, 0),
+        PriceEntity price = new PriceEntity(1L, 1L, LocalDateTime.of(2025, 1, 1, 0, 0, 0, 0),
                 LocalDateTime.of(2025, 1, 2, 0, 0, 0, 0), 1L, 1L, 1, 100.0, "USD");
 
         // Configurar el comportamiento del mock de ModelMapper
-        when(modelMapper.map(priceOutDTO, Price.class)).thenReturn(price);
+        when(modelMapper.map(priceOutDTO, PriceEntity.class)).thenReturn(price);
 
         // Ejecutar la conversión
-        Price result = priceMapper.convertToEntity(priceOutDTO);
+        PriceEntity result = priceMapper.convertToEntity(priceOutDTO);
 
         // Verificar que el resultado no sea nulo y sea igual al esperado
         assertNotNull(result);

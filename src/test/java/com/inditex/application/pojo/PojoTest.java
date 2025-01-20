@@ -1,7 +1,7 @@
 package com.inditex.application.pojo;
-import com.inditex.application.dto.PriceInDTO;
-import com.inditex.application.dto.PriceOutDTO;
+import com.inditex.domain.model.PriceInDTO;
 import com.inditex.domain.model.Price;
+import com.inditex.infrastructure.entity.PriceEntity;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
@@ -125,7 +125,7 @@ public class PojoTest {
         Double amount = 10.99;
         String currency = "EUR";
 
-        PriceOutDTO dto = new PriceOutDTO(brandId, startDate, endDate, priceList, productId, priority, amount, currency);
+        Price dto = new Price(brandId, startDate, endDate, priceList, productId, priority, amount, currency);
 
         assertEquals(brandId, dto.getBrandId());
         assertEquals(startDate, dto.getStartDate());
@@ -139,7 +139,7 @@ public class PojoTest {
 
     @Test
     public void testPriceOutDTOEmptyConstructor() {
-        PriceOutDTO dto = new PriceOutDTO();
+        Price dto = new Price();
         assertNull(dto.getBrandId());
         assertNull(dto.getStartDate());
         assertNull(dto.getEndDate());
@@ -162,7 +162,7 @@ public class PojoTest {
         Double amount = 100.0;
         String currency = "USD";
 
-        PriceOutDTO priceOutDTO = new PriceOutDTO(id, brandId, startDate, endDate, priceList, productId, priority, amount, currency);
+        Price priceOutDTO = new Price(id, brandId, startDate, endDate, priceList, productId, priority, amount, currency);
 
         // Verificar que los valores del objeto coinciden con los valores del constructor
         assertEquals(id, priceOutDTO.getId());
@@ -178,7 +178,7 @@ public class PojoTest {
     @Test
     public void testPriceOutDTOGettersAndSetters() {
         // Crear un objeto de la clase PriceOutDTO
-        PriceOutDTO priceOutDTO = new PriceOutDTO();
+        Price priceOutDTO = new Price();
 
         // Asignar valores utilizando los setters
         priceOutDTO.setId(1L);
@@ -206,15 +206,15 @@ public class PojoTest {
     @Test
     public void testEqualsAndHashCode() {
         // Crear dos objetos PriceOutDTO con los mismos valores
-        PriceOutDTO priceOutDTO1 = new PriceOutDTO(2L, LocalDateTime.of(2021, 1, 1, 0, 0), LocalDateTime.of(2021, 12, 31, 23, 59), 100L, 200L, 1, 99.99, "USD");
-        PriceOutDTO priceOutDTO2 = new PriceOutDTO(2L, LocalDateTime.of(2021, 1, 1, 0, 0), LocalDateTime.of(2021, 12, 31, 23, 59), 100L, 200L, 1, 99.99, "USD");
+        Price priceOutDTO1 = new Price(2L, LocalDateTime.of(2021, 1, 1, 0, 0), LocalDateTime.of(2021, 12, 31, 23, 59), 100L, 200L, 1, 99.99, "USD");
+        Price priceOutDTO2 = new Price(2L, LocalDateTime.of(2021, 1, 1, 0, 0), LocalDateTime.of(2021, 12, 31, 23, 59), 100L, 200L, 1, 99.99, "USD");
 
         // Verificar si ambos objetos son iguales
         assertTrue(priceOutDTO1.equals(priceOutDTO2)); // Deben ser iguales
         assertEquals(priceOutDTO1.hashCode(), priceOutDTO2.hashCode()); // Sus hashCodes deben ser iguales
 
         // Crear un objeto diferente con campos modificados
-        PriceOutDTO priceOutDTO3 = new PriceOutDTO(3L, LocalDateTime.of(2022, 1, 1, 0, 0), LocalDateTime.of(2022, 12, 31, 23, 59), 101L, 201L, 2, 199.99, "EUR");
+        Price priceOutDTO3 = new Price(3L, LocalDateTime.of(2022, 1, 1, 0, 0), LocalDateTime.of(2022, 12, 31, 23, 59), 101L, 201L, 2, 199.99, "EUR");
 
         // Verificar si los objetos son diferentes
         assertFalse(priceOutDTO1.equals(priceOutDTO3)); // No deben ser iguales
@@ -231,21 +231,21 @@ public class PojoTest {
         assertEquals(priceOutDTO2.hashCode(), priceOutDTO2.hashCode()); // El hashCode debe ser consistente para el mismo objeto
 
         // Test para comparar objetos con solo algunos campos diferentes
-        PriceOutDTO priceOutDTO4 = new PriceOutDTO(2L, LocalDateTime.of(2021, 1, 1, 0, 0), LocalDateTime.of(2021, 12, 31, 23, 59), 100L, 200L, 1, 99.99, "USD");
-        PriceOutDTO priceOutDTO5 = new PriceOutDTO(2L, LocalDateTime.of(2021, 1, 1, 0, 0), LocalDateTime.of(2021, 12, 31, 23, 59), 100L, 200L, 1, 99.99, "USD");
+        Price priceOutDTO4 = new Price(2L, LocalDateTime.of(2021, 1, 1, 0, 0), LocalDateTime.of(2021, 12, 31, 23, 59), 100L, 200L, 1, 99.99, "USD");
+        Price priceOutDTO5 = new Price(2L, LocalDateTime.of(2021, 1, 1, 0, 0), LocalDateTime.of(2021, 12, 31, 23, 59), 100L, 200L, 1, 99.99, "USD");
 
         // Verificar que dos objetos con los mismos valores son iguales
         assertTrue(priceOutDTO4.equals(priceOutDTO5)); // Deben ser iguales
         assertEquals(priceOutDTO4.hashCode(), priceOutDTO5.hashCode()); // Sus hashCodes deben ser iguales
 
         // Verificar que objetos con diferencias en un campo no sean iguales
-        PriceOutDTO priceOutDTO6 = new PriceOutDTO(2L, LocalDateTime.of(2021, 1, 1, 0, 0), LocalDateTime.of(2021, 12, 31, 23, 59), 100L, 200L, 1, 99.99, "EUR");
+        Price priceOutDTO6 = new Price(2L, LocalDateTime.of(2021, 1, 1, 0, 0), LocalDateTime.of(2021, 12, 31, 23, 59), 100L, 200L, 1, 99.99, "EUR");
         assertFalse(priceOutDTO4.equals(priceOutDTO6)); // Diferente valor para currency
         assertNotEquals(priceOutDTO4.hashCode(), priceOutDTO6.hashCode()); // hashCode debe ser diferente
 
         // Test: PriceOutDTO con un campo null
-        PriceOutDTO priceOutDTO7 = new PriceOutDTO(null, LocalDateTime.of(2021, 1, 1, 0, 0), LocalDateTime.of(2021, 12, 31, 23, 59), 100L, 200L, 1, 99.99, "USD");
-        PriceOutDTO priceOutDTO8 = new PriceOutDTO(null, LocalDateTime.of(2021, 1, 1, 0, 0), LocalDateTime.of(2021, 12, 31, 23, 59), 100L, 200L, 1, 99.99, "USD");
+        Price priceOutDTO7 = new Price(null, LocalDateTime.of(2021, 1, 1, 0, 0), LocalDateTime.of(2021, 12, 31, 23, 59), 100L, 200L, 1, 99.99, "USD");
+        Price priceOutDTO8 = new Price(null, LocalDateTime.of(2021, 1, 1, 0, 0), LocalDateTime.of(2021, 12, 31, 23, 59), 100L, 200L, 1, 99.99, "USD");
 
         // Verificar que objetos con un campo null sean iguales
         assertTrue(priceOutDTO7.equals(priceOutDTO8)); // Ambos objetos tienen valores nulos
@@ -256,22 +256,22 @@ public class PojoTest {
         assertFalse(priceOutDTO1.equals(otherObject)); // Diferente clase, no debe ser igual
 
         // Test para comparar PriceOutDTO con valores nulos en algunos campos
-        PriceOutDTO priceOutDTO9 = new PriceOutDTO(null, null, null, null, null, null, null, null);
-        PriceOutDTO priceOutDTO10 = new PriceOutDTO(null, null, null, null, null, null, null, null);
+        Price priceOutDTO9 = new Price(null, null, null, null, null, null, null, null);
+        Price priceOutDTO10 = new Price(null, null, null, null, null, null, null, null);
 
         assertTrue(priceOutDTO9.equals(priceOutDTO10)); // Ambos objetos tienen valores nulos
         assertEquals(priceOutDTO9.hashCode(), priceOutDTO10.hashCode()); // Sus hashCodes deben ser iguales
 
         // Test para comparar objetos donde un campo es null pero el resto es igual
-        PriceOutDTO priceOutDTO11 = new PriceOutDTO(2L, null, LocalDateTime.of(2021, 12, 31, 23, 59), 100L, 200L, 1, 99.99, "USD");
-        PriceOutDTO priceOutDTO12 = new PriceOutDTO(2L, null, LocalDateTime.of(2021, 12, 31, 23, 59), 100L, 200L, 1, 99.99, "USD");
+        Price priceOutDTO11 = new Price(2L, null, LocalDateTime.of(2021, 12, 31, 23, 59), 100L, 200L, 1, 99.99, "USD");
+        Price priceOutDTO12 = new Price(2L, null, LocalDateTime.of(2021, 12, 31, 23, 59), 100L, 200L, 1, 99.99, "USD");
 
         assertTrue(priceOutDTO11.equals(priceOutDTO12)); // Ambos objetos son iguales a pesar del campo null
         assertEquals(priceOutDTO11.hashCode(), priceOutDTO12.hashCode()); // Sus hashCodes deben ser iguales
 
         // Verificar igualdad de objetos con valores diferentes para todos los campos
-        PriceOutDTO priceOutDTO13 = new PriceOutDTO(3L, LocalDateTime.of(2022, 1, 1, 0, 0), LocalDateTime.of(2022, 12, 31, 23, 59), 101L, 201L, 2, 199.99, "EUR");
-        PriceOutDTO priceOutDTO14 = new PriceOutDTO(4L, LocalDateTime.of(2023, 2, 1, 0, 0), LocalDateTime.of(2023, 12, 31, 23, 59), 102L, 202L, 3, 299.99, "GBP");
+        Price priceOutDTO13 = new Price(3L, LocalDateTime.of(2022, 1, 1, 0, 0), LocalDateTime.of(2022, 12, 31, 23, 59), 101L, 201L, 2, 199.99, "EUR");
+        Price priceOutDTO14 = new Price(4L, LocalDateTime.of(2023, 2, 1, 0, 0), LocalDateTime.of(2023, 12, 31, 23, 59), 102L, 202L, 3, 299.99, "GBP");
 
         assertFalse(priceOutDTO13.equals(priceOutDTO14)); // Deberían ser diferentes
         assertNotEquals(priceOutDTO13.hashCode(), priceOutDTO14.hashCode()); // Sus hashCodes deberían ser diferentes
@@ -279,7 +279,7 @@ public class PojoTest {
     @Test
     public void testToString() {
         // Crear un objeto PriceOutDTO
-        PriceOutDTO priceOutDTO = new PriceOutDTO(2L, LocalDateTime.of(2021, 1, 1, 0, 0), LocalDateTime.of(2021, 12, 31, 23, 59), 100L, 200L, 1, 99.99, "USD");
+        Price priceOutDTO = new Price(2L, LocalDateTime.of(2021, 1, 1, 0, 0), LocalDateTime.of(2021, 12, 31, 23, 59), 100L, 200L, 1, 99.99, "USD");
 
         // Verificar que el método toString no sea null
         assertNotNull(priceOutDTO.toString());
@@ -299,7 +299,7 @@ public class PojoTest {
         Double amount = 10.99;
         String currency = "EUR";
 
-        Price price = new Price(brandId, startDate, endDate, priceList, productId, priority, amount, currency);
+        PriceEntity price = new PriceEntity(brandId, startDate, endDate, priceList, productId, priority, amount, currency);
 
         assertEquals(brandId, price.getBrandId());
         assertEquals(startDate, price.getStartDate());
@@ -313,7 +313,7 @@ public class PojoTest {
 
     @Test
     public void testSetStartDate() {
-        Price price = new Price();
+        PriceEntity price = new PriceEntity();
         LocalDateTime startDate = LocalDateTime.of(2025, 1, 1, 0, 0, 0, 0);
         price.setStartDate(startDate);
         assertEquals(startDate, price.getStartDate());
@@ -321,7 +321,7 @@ public class PojoTest {
 
     @Test
     public void testSetProductId() {
-        Price price = new Price();
+        PriceEntity price = new PriceEntity();
         Long productId = 123L;
         price.setProductId(productId);
         assertEquals(Long.valueOf(123), price.getProductId());
@@ -329,7 +329,7 @@ public class PojoTest {
 
     @Test
     public void testSetPriority() {
-        Price price = new Price();
+        PriceEntity price = new PriceEntity();
         Integer priority = 5;
         price.setPriority(priority);
         assertEquals(Integer.valueOf(5), price.getPriority());
@@ -337,7 +337,7 @@ public class PojoTest {
 
     @Test
     public void testSetPriceList() {
-        Price price = new Price();
+        PriceEntity price = new PriceEntity();
         Long priceList = 999L;
         price.setPriceList(priceList);
         assertEquals(Long.valueOf(999), price.getPriceList());
@@ -345,7 +345,7 @@ public class PojoTest {
 
     @Test
     public void testSetEndDate() {
-        Price price = new Price();
+        PriceEntity price = new PriceEntity();
         LocalDateTime endDate = LocalDateTime.of(2025, 1, 2, 0, 0, 0, 0);
         price.setEndDate(endDate);
         assertEquals(endDate, price.getEndDate());
@@ -353,7 +353,7 @@ public class PojoTest {
 
     @Test
     public void testSetBrandId() {
-        Price price = new Price();
+        PriceEntity price = new PriceEntity();
         Long brandId = 456L;
         price.setBrandId(brandId);
         assertEquals(Long.valueOf(456), price.getBrandId());
@@ -361,7 +361,7 @@ public class PojoTest {
 
     @Test
     public void testSetAmount() {
-        Price price = new Price();
+        PriceEntity price = new PriceEntity();
         Double amount = 100.5;
         price.setAmount(amount);
         assertEquals(Double.valueOf(100.5), price.getAmount());
@@ -369,9 +369,9 @@ public class PojoTest {
 
     @Test
     public void testEquals() {
-        Price price1 = new Price(1L, 1L, LocalDateTime.of(2025, 1, 1, 0, 0, 0, 0), LocalDateTime.of(2025, 1, 2, 0, 0, 0, 0), 1L, 1L, 1, 100.0, "USD");
-        Price price2 = new Price(1L, 1L, LocalDateTime.of(2025, 1, 1, 0, 0, 0, 0), LocalDateTime.of(2025, 1, 2, 0, 0, 0, 0), 1L, 1L, 1, 100.0, "USD");
-        Price price3 = new Price(2L, 1L, LocalDateTime.of(2025, 1, 1, 0, 0, 0, 0), LocalDateTime.of(2025, 1, 2, 0, 0, 0, 0), 1L, 1L, 1, 100.0, "USD");
+        PriceEntity price1 = new PriceEntity(1L, 1L, LocalDateTime.of(2025, 1, 1, 0, 0, 0, 0), LocalDateTime.of(2025, 1, 2, 0, 0, 0, 0), 1L, 1L, 1, 100.0, "USD");
+        PriceEntity price2 = new PriceEntity(1L, 1L, LocalDateTime.of(2025, 1, 1, 0, 0, 0, 0), LocalDateTime.of(2025, 1, 2, 0, 0, 0, 0), 1L, 1L, 1, 100.0, "USD");
+        PriceEntity price3 = new PriceEntity(2L, 1L, LocalDateTime.of(2025, 1, 1, 0, 0, 0, 0), LocalDateTime.of(2025, 1, 2, 0, 0, 0, 0), 1L, 1L, 1, 100.0, "USD");
 
         assertTrue(price1.equals(price2)); // Deben ser iguales
         assertFalse(price1.equals(price3)); // Deben ser diferentes
@@ -380,7 +380,7 @@ public class PojoTest {
 
     @Test
     public void testToStringEntity() {
-        Price price = new Price(1L, 1L, LocalDateTime.of(2025, 1, 1, 0, 0, 0, 0), LocalDateTime.of(2025, 1, 2, 0, 0, 0, 0), 1L, 1L, 1, 100.0, "USD");
+        PriceEntity price = new PriceEntity(1L, 1L, LocalDateTime.of(2025, 1, 1, 0, 0, 0, 0), LocalDateTime.of(2025, 1, 2, 0, 0, 0, 0), 1L, 1L, 1, 100.0, "USD");
 
         assertNotNull(price.toString());
 
@@ -397,8 +397,8 @@ public class PojoTest {
 
     @Test
     public void testHashCodeEntity() {
-        Price price1 = new Price(1L, 1L, LocalDateTime.of(2025, 1, 1, 0, 0, 0, 0), LocalDateTime.of(2025, 1, 2, 0, 0, 0, 0), 1L, 1L, 1, 100.0, "USD");
-        Price price2 = new Price(1L, 1L, LocalDateTime.of(2025, 1, 1, 0, 0, 0, 0), LocalDateTime.of(2025, 1, 2, 0, 0, 0, 0), 1L, 1L, 1, 100.0, "USD");
+        PriceEntity price1 = new PriceEntity(1L, 1L, LocalDateTime.of(2025, 1, 1, 0, 0, 0, 0), LocalDateTime.of(2025, 1, 2, 0, 0, 0, 0), 1L, 1L, 1, 100.0, "USD");
+        PriceEntity price2 = new PriceEntity(1L, 1L, LocalDateTime.of(2025, 1, 1, 0, 0, 0, 0), LocalDateTime.of(2025, 1, 2, 0, 0, 0, 0), 1L, 1L, 1, 100.0, "USD");
 
         assertEquals(price1.hashCode(), price2.hashCode());
 
@@ -409,7 +409,7 @@ public class PojoTest {
 
     @Test
     public void testEntityConstructor() {
-        Price price = new Price(1L, 1L, LocalDateTime.of(2025, 1, 1, 0, 0, 0, 0), LocalDateTime.of(2025, 1, 2, 0, 0, 0, 0), 1L, 1L, 1, 100.0, "USD");
+        PriceEntity price = new PriceEntity(1L, 1L, LocalDateTime.of(2025, 1, 1, 0, 0, 0, 0), LocalDateTime.of(2025, 1, 2, 0, 0, 0, 0), 1L, 1L, 1, 100.0, "USD");
 
         assertEquals(1L, price.getBrandId());
         assertEquals(LocalDateTime.of(2025, 1, 1, 0, 0, 0, 0), price.getStartDate());
@@ -423,7 +423,7 @@ public class PojoTest {
 
     @Test
     public void testPriceEntityProperties() {
-        Price price = new Price(1L, LocalDateTime.of(2020, 6, 14, 0, 0, 0, 0), LocalDateTime.of(2020, 6, 14, 23, 59, 59, 999999), 2L, 35455L, 1, 10.99, "EUR");
+        PriceEntity price = new PriceEntity(1L, LocalDateTime.of(2020, 6, 14, 0, 0, 0, 0), LocalDateTime.of(2020, 6, 14, 23, 59, 59, 999999), 2L, 35455L, 1, 10.99, "EUR");
         price.setId(1L);  // Asignar un ID manualmente para que la prueba pase
 
         assertNotNull(price.getId());
@@ -434,7 +434,7 @@ public class PojoTest {
 
     @Test
     public void testPriceEntityWithoutId() {
-        Price price = new Price();
+        PriceEntity price = new PriceEntity();
         assertNull(price.getId());
     }
 

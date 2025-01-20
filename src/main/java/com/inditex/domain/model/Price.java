@@ -4,58 +4,28 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
 import java.time.LocalDateTime;
 
 /**
- * Entidad que representa un precio y mapea la tabla 'PRICES' en la base de datos.
+ * DTO que representa la salida de la consulta de precios.
  */
-@Entity
-@Table(name = "PRICES")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class Price {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    @Column(name = "BRAND_ID")
-    private Long brandId;
-
-    @Column(name = "START_DATE")
-    private LocalDateTime startDate;
-
-    @Column(name = "END_DATE")
-    private LocalDateTime endDate;
-
-    @Column(name = "PRICE_LIST")
-    private Long priceList;
-
-    @Column(name = "PRODUCT_ID")
-    private Long productId;
-
-    @Column(name = "PRIORITY")
-    private Integer priority;
-
-    @Column(name = "PRICE")
-    private Double amount;
-
-    @Column(name = "CURR")
-    private String currency;
+    private Long id;          // ID único del precio
+    private Long brandId;     // ID de la marca asociada al precio
+    private LocalDateTime startDate;  // Fecha de inicio de validez del precio
+    private LocalDateTime endDate;    // Fecha de fin de validez del precio
+    private Long priceList;   // ID de la lista de precios
+    private Long productId;   // ID del producto
+    private Integer priority; // Prioridad del precio
+    private Double amount;    // Monto del precio
+    private String currency;  // Moneda del precio
 
     /**
-     * Constructor con parámetros.
-     *
-     * @param brandId   El ID de la marca.
-     * @param startDate La fecha de inicio de validez del precio.
-     * @param endDate   La fecha de fin de validez del precio.
-     * @param priceList El ID de la lista de precios.
-     * @param productId El ID del producto.
-     * @param priority  La prioridad del precio.
-     * @param price     El valor del precio.
-     * @param curr      La moneda del precio.
+     * Constructor adicional para facilitar la creación del DTO sin todos los campos.
      */
     public Price(Long brandId, LocalDateTime startDate, LocalDateTime endDate, Long priceList, Long productId, Integer priority, Double price, String curr) {
         this.brandId = brandId;

@@ -1,4 +1,4 @@
-package com.inditex.domain.exception;
+package com.inditex.application.exception;
 
 /**
  * Excepción lanzada cuando ocurre un error en el servicio de precios, como fallos internos o errores no controlados.

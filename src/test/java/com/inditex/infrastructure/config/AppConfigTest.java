@@ -1,10 +1,9 @@
 package com.inditex.infrastructure.config;
 
-import com.inditex.domain.port.in.AuthServicePort;
-import com.inditex.domain.port.in.PriceServicePort;
+import com.inditex.domain.port.in.ValidateCredential;
+import com.inditex.domain.port.in.GetSinglePrice;
 import com.inditex.domain.port.out.PriceRepositoryPort;
-import com.inditex.domain.service.AuthService;
-import com.inditex.domain.service.PriceService;
+import com.inditex.application.service.AuthService;
 import com.inditex.infrastructure.repository.PriceRepository;
 import com.inditex.infrastructure.repository.PriceRepositoryAdapter;
 import com.inditex.infrastructure.security.JwtRequestFilter;
@@ -51,17 +50,17 @@ public class AppConfigTest {
     @Test
     public void testPriceServicePortBean() {
         // Verificar si el bean PriceServicePort se crea correctamente
-        PriceServicePort priceServicePortBean = applicationContext.getBean(PriceServicePort.class);
-        assertThat(priceServicePortBean).isNotNull();
-        assertThat(priceServicePortBean).isInstanceOf(PriceService.class);
+        GetSinglePrice priceServiceBean = applicationContext.getBean(GetSinglePrice.class);
+        assertThat(priceServiceBean).isNotNull();
+        assertThat(priceServiceBean).isInstanceOf(com.inditex.application.service.PriceService.class);
     }
 
     @Test
     public void testAuthServicePortBean() {
         // Verificar si el bean AuthServicePort se crea correctamente
-        AuthServicePort authServicePortBean = applicationContext.getBean(AuthServicePort.class);
-        assertThat(authServicePortBean).isNotNull();
-        assertThat(authServicePortBean).isInstanceOf(AuthService.class);
+        ValidateCredential validateCredentialBean = applicationContext.getBean(ValidateCredential.class);
+        assertThat(validateCredentialBean).isNotNull();
+        assertThat(validateCredentialBean).isInstanceOf(AuthService.class);
     }
 
     @Test

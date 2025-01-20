@@ -1,9 +1,7 @@
-package com.inditex.application.dto;
+package com.inditex.domain.model;
 
-import javax.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 /**
  * DTO que representa los parámetros necesarios para obtener el precio de un producto.

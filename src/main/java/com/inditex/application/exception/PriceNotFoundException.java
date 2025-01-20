@@ -1,4 +1,4 @@
-package com.inditex.domain.exception;
+package com.inditex.application.exception;
 
 /**
  * Excepción lanzada cuando no se encuentran precios para los parámetros dados.
